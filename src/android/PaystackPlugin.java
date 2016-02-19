@@ -41,7 +41,7 @@ public class PaystackPlugin extends CordovaPlugin {
         super.initialize(cordova, webView);
         
         //initialize sdk
-    	PaystackSdk.initialize(cordova.getContext());
+    	PaystackSdk.initialize(this.cordova.getActivity().getApplicationContext());
     }
 
 	@Override
