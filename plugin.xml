@@ -3,19 +3,19 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="com.arttitude360.cordova.paystack"
+    id="cordova-plugin-paystack"
     version="1.0.1">
     <name>PaystackPlugin</name>
     <description>This plugin allows to add to add Paystack Payments to your application using Paystack Mobile SDK Native library</description>
     <keywords>paystack, sdk, payments</keywords>
     <license>MIT, see LICENSE.md for details</license>
     <engines>
-            <engine name="cordova" version=">=3.6.0" />
+            <engine name="cordova" version=">=3.0.0" />
     </engines>
 
 
-    <js-module src="www/cdv-plugin-paystack-sdk.js" name="PaystackPlugin">
-        <clobbers target="PaystackPlugin" />
+    <js-module src="www/PaystackPlugin.js" name="PaystackPlugin">
+        <clobbers target="window.PaystackPlugin" />
     </js-module>
 
     <!-- ios -->
@@ -34,11 +34,11 @@
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="PaystackPlugin">
-                <param name="android-package" value="com.arttitude360.cordova.sdk.PaystackPlugin" />
+                <param name="android-package" value="com.arttitude360.cordova.PaystackPlugin" />
             </feature>
         </config-file>
 
-        <source-file src="src/android/PaystackPlugin.java" target-dir="src/com/arttitude360/cordova/sdk" />
+        <source-file src="src/android/PaystackPlugin.java" target-dir="src/com/arttitude360/cordova" />
 	      <framework src="src/android/build.gradle" custom="true" type="gradleReference" />
 
     </platform>

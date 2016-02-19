@@ -1,4 +1,4 @@
-package com.arttitude360.cordova.sdk;
+package com.arttitude360.cordova;
 
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.CallbackContext;
@@ -23,6 +23,8 @@ public class PaystackPlugin extends CordovaPlugin {
 	protected Token token;
 	protected Card card;
 
+	public static final String TAG = "PaystackPlugin";
+
 	/**
      * Cordova callback context
      */
@@ -39,7 +41,7 @@ public class PaystackPlugin extends CordovaPlugin {
         super.initialize(cordova, webView);
         
         //initialize sdk
-    	PaystackSdk.initialize(this.cordova.getContext());
+    	PaystackSdk.initialize(cordova.getContext());
     }
 
 	@Override
@@ -80,7 +82,7 @@ public class PaystackPlugin extends CordovaPlugin {
             success.put("message", msg);
             context.success(success);
         } catch (JSONException e) {
-            handleError(e.getMessage(), ERROR_EXCEPTION);
+            handleError(e.getMessage());
         }
     }
 
@@ -167,7 +169,7 @@ public class PaystackPlugin extends CordovaPlugin {
 			@Override
 			public void onCreate(Token token) {
 				//here you retrieve the token, and send to your server for charging.
-				handleSuccess(token);
+				handleSuccess(token.toString());
 			
 			}
 
