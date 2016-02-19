@@ -145,7 +145,7 @@ public class PaystackPlugin extends CordovaPlugin {
 		card.setExpiryMonth(expiryMonth);
 
 		//validate expiry year;
-		Integer expiryYear = args.getInt(2)
+		Integer expiryYear = args.getInt(2);
 		
 		if (expiryYear < 1) {
 			handleError("Invalid year");
