@@ -1,0 +1,13 @@
+.DS_Store
+npm-debug.log
+report
+
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+*.tmp

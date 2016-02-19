@@ -1,0 +1,8 @@
+repositories {
+	maven {
+		url 'https://dl.bintray.com/paystack/maven/'
+	}
+}
+dependencies {
+	compile 'co.paystack.android:paystack:1.1.0'
+}
