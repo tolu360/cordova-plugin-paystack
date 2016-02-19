@@ -15,15 +15,14 @@ function PaystackPlugin() {}
  * A single object argument will be passed which has a single key: "message" is a string containing the returned token.
  * @param {Function} errorCallback - callback to be invoked on failure to acquire a valid token.
  * A single object argument will be passed which has a single key: "error" is a string containing a description of the error.
- * @param {Array} cardInfo - The card details in the order - [cardNumber, expiryMonth, expiryYear, cvc]. 
+ * @param {Array} The card details in the order - cardNumber, expiryMonth, expiryYear, cvc.
  */
-PaystackPlugin.prototype.getToken = function(successCallback, errorCallback, cardInfo) {
+PaystackPlugin.prototype.getToken = function(successCallback, errorCallback, cardNumber, expiryMonth, expiryYear, cvc) {
 	return cordova.exec(successCallback,
 		errorCallback,
 		'PaystackPlugin',
 		'getToken',
-		cardInfo
-		);
+		[cardNumber, expiryMonth, expiryYear, cvc]);
 };
 
 module.exports = new PaystackPlugin();

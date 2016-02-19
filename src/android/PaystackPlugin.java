@@ -86,7 +86,7 @@ public class PaystackPlugin extends CordovaPlugin {
         }
     }
 
-    private void getToken(JSONArray args) {
+    private void getToken(JSONArray args) throws JSONException {
     	//build a card
 		// Card card = new Card.Builder(cardNumber, expiryMonth, expiryYear, cvc).build();
 		// cardNumber: String
@@ -103,7 +103,7 @@ public class PaystackPlugin extends CordovaPlugin {
 		}
     }
 
-    protected void validateCard(JSONArray args) {
+    protected void validateCard(JSONArray args) throws JSONException {
 		String cardNum = args.getString(0).trim();
 
 		if (isEmpty(cardNum)) {
