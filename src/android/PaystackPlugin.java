@@ -79,7 +79,7 @@ public class PaystackPlugin extends CordovaPlugin {
         try {
             Log.i(TAG, msg);
             JSONObject success = new JSONObject();
-            success.put("message", msg);
+            success.put("token", msg);
             context.success(success);
         } catch (JSONException e) {
             handleError(e.getMessage());
@@ -169,7 +169,7 @@ public class PaystackPlugin extends CordovaPlugin {
 			@Override
 			public void onCreate(Token token) {
 				//here you retrieve the token, and send to your server for charging.
-				handleSuccess(token.toString());
+				handleSuccess(token.token);
 			
 			}
 
