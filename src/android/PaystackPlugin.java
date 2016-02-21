@@ -78,7 +78,7 @@ public class PaystackPlugin extends CordovaPlugin {
 
     protected void handleSuccess(String token, String lastDigits){
         try {
-            Log.i(TAG, msg);
+            Log.i(TAG, token);
             JSONObject success = new JSONObject();
             success.put("token", token);
             success.put("last4", lastDigits);
