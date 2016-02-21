@@ -54,47 +54,42 @@ public class PaystackPlugin extends CordovaPlugin {
                 getToken(args);
                 result = true;
             } else {
-                handleError("Invalid action");
+                handleError("Invalid action", 404);
                 result = false;
             }
         } catch(Exception e ) {
-            handleError(e.getMessage());
+            handleError(e.getMessage(), 401);
             result = false;
         }
         return result;
     }
 
-    protected void handleError(String errorMsg){
+    protected void handleError(String errorMsg, int errorCode){
         try {
             Log.e(TAG, errorMsg);
             JSONObject error = new JSONObject();
             error.put("error", errorMsg);
+            error.put("code", errorCode);
             context.error(error);
         } catch (JSONException e) {
             Log.e(TAG, e.toString());
         }
     }
 
-    protected void handleSuccess(String msg){
+    protected void handleSuccess(String token, String lastDigits){
         try {
             Log.i(TAG, msg);
             JSONObject success = new JSONObject();
-            success.put("token", msg);
+            success.put("token", token);
+            success.put("last4", lastDigits);
             context.success(success);
         } catch (JSONException e) {
-            handleError(e.getMessage());
+            handleError(e.getMessage(), 401);
         }
     }
 
     private void getToken(JSONArray args) throws JSONException {
-    	//build a card
-		// Card card = new Card.Builder(cardNumber, expiryMonth, expiryYear, cvc).build();
-		// cardNumber: String
-		// expiryMonth: Integer 1-12
-		// expiryYear: Integer 2016
-		// cvc: String 234
-		
-
+    	
 		//check card validity
         validateCard(args);
 		
@@ -107,7 +102,7 @@ public class PaystackPlugin extends CordovaPlugin {
 		String cardNum = args.getString(0).trim();
 
 		if (isEmpty(cardNum)) {
-			handleError("Empty card number");
+			handleError("Empty card number", 420);
 			return;
 		}
 
@@ -115,14 +110,14 @@ public class PaystackPlugin extends CordovaPlugin {
 		card = new Card.Builder(cardNum, 0, 0, "").build();
 
 		if (!card.validNumber()) {
-			handleError("Invalid card number");
+			handleError("Invalid card number", 421);
 			return;
 		}
 
 		//validate cvc
 		String cvc = args.getString(3).trim();
 		if (isEmpty(cvc)) {
-			handleError("Empty cvc");
+			handleError("Empty cvc", 422);
 			return;
 		}
 		
@@ -131,7 +126,7 @@ public class PaystackPlugin extends CordovaPlugin {
 
 		//check that it's valid
 		if (!card.validCVC()) {
-			handleError("Invalid cvc");
+			handleError("Invalid cvc", 423);
 			return;
 		}
 
@@ -139,7 +134,7 @@ public class PaystackPlugin extends CordovaPlugin {
 		Integer expiryMonth = args.getInt(1);
 		
 		if (expiryMonth < 1) {
-			handleError("Invalid month");
+			handleError("Invalid month", 424);
 			return;
 		}
 
@@ -150,7 +145,7 @@ public class PaystackPlugin extends CordovaPlugin {
 		Integer expiryYear = args.getInt(2);
 		
 		if (expiryYear < 1) {
-			handleError("Invalid year");
+			handleError("Invalid year", 425);
 			return;
 		}
 
@@ -159,7 +154,7 @@ public class PaystackPlugin extends CordovaPlugin {
 
 		//validate expiry
 		if (!card.validExpiryDate()) {
-			handleError("Invalid expiry");
+			handleError("Invalid expiry date", 426);
 		}
     }
 
@@ -169,13 +164,13 @@ public class PaystackPlugin extends CordovaPlugin {
 			@Override
 			public void onCreate(Token token) {
 				//here you retrieve the token, and send to your server for charging.
-				handleSuccess(token.token);
+				handleSuccess(token.token, token.last4);
 			
 			}
 
 			@Override
 			public void onError(Exception error) {
-				handleError(error.getMessage());
+				handleError(error.getMessage(), 427);
 			}
 		});
 	}

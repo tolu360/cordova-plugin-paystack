@@ -130,9 +130,9 @@ function onDeviceReady() {
 Explaining the arguments to `window.PaystackPlugin.getToken`:
 
 + {Function} successCallback - callback to be invoked on successfully acquiring a token.
- * A single object argument will be passed which has a single key: "token" is a string containing the returned token.
+ * A single object argument will be passed which has 2 keys: "token" is a string containing the returned token, while "last4" is a string containing the last 4 digits of the card the token belongs to.
 + {Function} errorCallback - callback to be invoked on failure to acquire a valid token.
- * A single object argument will be passed which has a single key: "error" is a string containing a description of the error.
+ * A single object argument will be passed which has 2 keys: "error" is a string containing a description of the error, "code" is an arbitrary error code.
 + cardNumber: the card number as a String without any seperator e.g 5555555555554444
 + expiryMonth: the expiry month as an integer ranging from 1-12 e.g 10 (October)
 + expiryYear: the expiry year as an integer e.g 2015
