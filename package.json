@@ -1,11 +1,13 @@
 {
   "name": "cordova-plugin-paystack",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "This plugin allows to add Paystack Payments to your application using Paystack Mobile SDK Native library",
   "cordova": {
     "id": "cordova-plugin-paystack",
     "platforms": [
-      "android"
+      "android",
+      "ecosystem:cordova",
+      "cordova-android"
     ]
   },
   "repository": {
