@@ -6,12 +6,12 @@
 @interface PaystackPlugin : CDVPlugin
 
 - (void)pluginInitialize;
-+ (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand;
-+ (BOOL)isExpMonthValid:(NSString *)expMonth;
-+ (BOOL)isExpYearValid:(NSString *)expYear forMonth:(NSString *)expMonth;
-+ (BOOL)isCvcValid:(NSString *)cvc withNumber:(NSString *)cardNumber;
-+ (BOOL)isCardValid:(PSTCKCardParams *)card;
-- (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(int)errorCode;
++ (BOOL)isCardNumberValid:(nonnull NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand;
++ (BOOL)isExpMonthValid:(nonnull NSString *)expMonth;
++ (BOOL)isExpYearValid:(nonnull NSString *)expYear forMonth:(NSString *)expMonth;
++ (BOOL)isCvcValid:(nonnull NSString *)cvc withNumber:(NSString *)cardNumber;
++ (BOOL)isCardValid:(nonnull PSTCKCardParams *)card;
+- (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(NSNumber *)errorCode;
 - (NSMutableDictionary*)setTokenMsg:(NSString *)token withCardLastDigits:(NSString *)last4;
 - (void)getToken:(CDVInvokedUrlCommand*)command;
 
