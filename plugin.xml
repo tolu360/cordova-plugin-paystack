@@ -19,7 +19,7 @@
     </js-module>
 
     <!-- ios -->
-   <!--  <platform name="ios">
+    <platform name="ios">
 
         <config-file target="config.xml" parent="/*">
             <feature name="PaystackPlugin">
@@ -27,7 +27,11 @@
             </feature>
         </config-file>
 
-    </platform> -->
+        <framework src="src/ios/Paystack.framework" custom="true" />
+        <header-file src="PaystackPlugin.h" />
+        <source-file src="PaystackPlugin.m" />
+
+    </platform>
 
     <!-- android -->
     <platform name="android">
@@ -39,7 +43,7 @@
         </config-file>
 
         <source-file src="src/android/PaystackPlugin.java" target-dir="src/com/arttitude360/cordova" />
-	      <framework src="src/android/build.gradle" custom="true" type="gradleReference" />
+        <framework src="src/android/build.gradle" custom="true" type="gradleReference" />
 
     </platform>
 
