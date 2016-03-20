@@ -2,7 +2,7 @@
 
 #import <Cordova/CDVPlugin.h>
 // #import <Paystack/Paystack.h>
-@import Paystack;
+#import Paystack.h
 
 @interface PaystackPlugin : CDVPlugin
 
