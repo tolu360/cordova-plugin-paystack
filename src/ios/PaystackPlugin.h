@@ -12,7 +12,7 @@
 + (BOOL)isCvcValid:(NSString *)cvc withNumber:(NSString *)cardNumber;
 + (BOOL)isCardValid:(PSTCKCardParams *)card;
 - (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(int)errorCode;
-- (NSMutableDictionary*)setTokenMsg:(NSString *)token withCardLastDigits:(NSString *)last4
+- (NSMutableDictionary*)setTokenMsg:(NSString *)token withCardLastDigits:(NSString *)last4;
 - (void)getToken:(CDVInvokedUrlCommand*)command;
 
 @end
