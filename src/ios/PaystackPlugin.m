@@ -15,27 +15,32 @@
 
 + (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand
 {
-    return ([PSTCKCardValidator validationStateForNumber:cardNumber validatingCardBrand:validateCardBrand] == PSTCKCardValidationStateValid);
+    BOOL isValid = ([PSTCKCardValidator validationStateForNumber:cardNumber validatingCardBrand:validateCardBrand] == PSTCKCardValidationStateValid);
+    return isValid;
 }
 
 + (BOOL)isExpMonthValid:(NSString *)expMonth
 {
-    return ([PSTCKCardValidator validationStateForExpirationMonth:expMonth] == PSTCKCardValidationStateValid);
+    BOOL isValid = ([PSTCKCardValidator validationStateForExpirationMonth:expMonth] == PSTCKCardValidationStateValid);
+    return isValid;
 }
 
 + (BOOL)isExpYearValid:(NSString *)expYear forMonth:(NSString *)expMonth
 {
-    return ([PSTCKCardValidator validationStateForExpirationYear:expYear inMonth:expMonth] == PSTCKCardValidationStateValid);
+    BOOL isValid = ([PSTCKCardValidator validationStateForExpirationYear:expYear inMonth:expMonth] == PSTCKCardValidationStateValid);
+    return isValid;
 }
 
 + (BOOL)isCvcValid:(NSString *)cvc withNumber:(NSString *)cardNumber
 {
-    return ([PSTCKCardValidator validationStateForCVC:cvc cardBrand:[PSTCKCardValidator brandForNumber:cardNumber]] == PSTCKCardValidationStateValid);
+    BOOL isValid = ([PSTCKCardValidator validationStateForCVC:cvc cardBrand:[PSTCKCardValidator brandForNumber:cardNumber]] == PSTCKCardValidationStateValid);
+    return isValid;
 }
 
 + (BOOL)isCardValid:(PSTCKCardParams *)card
 {
-    return ([PSTCKCardValidator validationStateForCard:card] == PSTCKCardValidationStateValid);
+    BOOL isValid = ([PSTCKCardValidator validationStateForCard:card] == PSTCKCardValidationStateValid);
+    return isValid;
 }
 
 - (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(int)errorCode
