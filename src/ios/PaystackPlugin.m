@@ -2,7 +2,7 @@
 
 #import "PaystackPlugin.h"
 #import <Cordova/CDVPlugin.h>
-#import <Paystack/Paystack.h>
+
 
 
 @implementation PaystackPlugin
@@ -38,7 +38,7 @@
     return ([PSTCKCardValidator validationStateForCard:card] == PSTCKCardValidationStateValid);
 }
 
-- (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(int)errorCode
+- (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(NSNumber *)errorCode
 {
     NSMutableDictionary *returnInfo;
     returnInfo = [NSMutableDictionary dictionaryWithCapacity:2];
@@ -104,17 +104,17 @@
         cardParam.cvc = rawCvc;
 
         if ([self isCardValid:cardParam]) {
-            [[PSTCKAPIClient sharedClient] createTokenWithCard:cardParam resultHandler:^(PSTCKToken token, NSError error) {
+            [[PSTCKAPIClient sharedClient] createTokenWithCard:cardParam resultHandler:^(PSTCKToken *token, NSError *error) {
                 if (token) {
-                    NSMutableDictionary *returnInfo = [self setTokenMsg:token.token withCardLastDigits:token.last4];
+                    NSMutableDictionary *returnInfo = [self setTokenMsg:token.tokenId withCardLastDigits:token.last4];
 
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
+                    __block pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
                 }
 
                 if (error) {
                     NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error retrieving token for card." withErrorCode:401];
 
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+                    __block pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
                 }
             }];
         } else {

@@ -1,6 +1,7 @@
 /********* PaystackPlugin.h Cordova Plugin Header *******/
 
 #import <Cordova/CDVPlugin.h>
+#import "Paystack.h"
 
 @interface PaystackPlugin : CDVPlugin
 
