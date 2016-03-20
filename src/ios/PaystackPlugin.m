@@ -44,7 +44,7 @@
     returnInfo = [NSMutableDictionary dictionaryWithCapacity:2];
 
     [returnInfo setObject:errorMsg forKey:@"error"];
-    [returnInfo setObject:errorCode forKey:@"code"];
+    [returnInfo setObject:[NSNumber numberWithInt:errorCode] forKey:@"code"];
 
     return returnInfo;
 }
