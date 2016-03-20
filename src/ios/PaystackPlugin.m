@@ -12,135 +12,119 @@
     [Paystack setDefaultPublishableKey:paystackPublishableKey];
 }
 
-- (void)getToken:(CDVInvokedUrlCommand*)command
++ (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand
 {
-    // [cardNumber, expiryMonth, expiryYear, cvc]
-    
-    // Check command.arguments here.
-    [self.commandDelegate runInBackground:^{
-        NSString* rawNumber = [command.arguments objectAtIndex:0];
-        NSString* rawExpMonth = [command.arguments objectAtIndex:1];
-        NSString* rawExpYear = [command.arguments objectAtIndex:2];
-        NSString* rawCvc = [command.arguments objectAtIndex:3];
-        NSError* outError = nil;
-
-        NSLog(@"cardNumber passed: %@", rawNumber);
-
-        PSTCKCardParams *cardParam = [[PSTCKCardParams alloc] init];
-        PSTCKCard *card = [[PSTCKCard alloc] init];
-        // card.number = nil;
-        // card.cvc = nil;
-        // card.expMonth = nil;
-        // card.expYear =
-
-        if (! [cardParam validateNumber:rawNumber:outError]) {
-            // Create an object that will be serialized into a JSON object.
-            // This object contains the date String contents and a success property.
-            NSDictionary *jsonObj = [ [NSDictionary alloc]
-                                       initWithObjectsAndKeys :
-                                         @"Invalid card number", @"error",
-                                         421, @"code",
-                                         nil
-                                    ];
-            
-            // Create an instance of CDVPluginResult, with an OK status code.
-            // Set the return message as the Dictionary object (jsonObj)...
-            // ... to be serialized as JSON in the browser
-            CDVPluginResult *pluginResult = [ CDVPluginResult
-                                              resultWithStatus    : CDVCommandStatus_ERROR
-                                              messageAsDictionary : jsonObj
-                                            ];
-        }
-
-        // number, cvc, expMonth, expYear
-        card.number = rawNumber;
-
-        if (! [cardParam validateCvc:rawCvc:outError]) {
-            NSDictionary *jsonObj = [ [NSDictionary alloc]
-                                       initWithObjectsAndKeys :
-                                         @"Invalid cvc", @"error",
-                                         423, @"code",
-                                         nil
-                                    ];
-            
-            CDVPluginResult *pluginResult = [ CDVPluginResult
-                                              resultWithStatus    : CDVCommandStatus_ERROR
-                                              messageAsDictionary : jsonObj
-                                            ];
-        }
-
-        card.cvc = rawCvc;
-
-        if (! [cardParam validateExpMonth:rawCvc:outError]) {
-            NSDictionary *jsonObj = [ [NSDictionary alloc]
-                                       initWithObjectsAndKeys :
-                                         @"Invalid expiry month", @"error",
-                                         424, @"code",
-                                         nil
-                                    ];
-            
-            CDVPluginResult *pluginResult = [ CDVPluginResult
-                                              resultWithStatus    : CDVCommandStatus_ERROR
-                                              messageAsDictionary : jsonObj
-                                            ];
-        }
-
-        card.expMonth = rawExpMonth;
-
-        if (! [cardParam validateExpYear:rawCvc:outError]) {
-            NSDictionary *jsonObj = [ [NSDictionary alloc]
-                                       initWithObjectsAndKeys :
-                                         @"Invalid expiry year", @"error",
-                                         425, @"code",
-                                         nil
-                                    ];
-            
-            CDVPluginResult *pluginResult = [ CDVPluginResult
-                                              resultWithStatus    : CDVCommandStatus_ERROR
-                                              messageAsDictionary : jsonObj
-                                            ];
-        }
-
-        card.expYear = rawExpYear;
-
-        [[PSTCKAPIClient sharedClient] createTokenWithCard:card resultHandler:^(token, error) {
-            if (token) {
-                NSLog(@"Token obtained successfully: %@", token);
-
-                NSDictionary *jsonObj = [ [NSDictionary alloc]
-                                       initWithObjectsAndKeys :
-                                         token.token, @"token",
-                                         token.last4, @"last4",
-                                         nil
-                                    ];
-            
-                CDVPluginResult *pluginResult = [ CDVPluginResult
-                                                  resultWithStatus    : CDVCommandStatus_OK
-                                                  messageAsDictionary : jsonObj
-                                                ];
-            }
-
-            if (error) {
-                NSLog(@"Token not obtained successfully: %@", error);
-
-                NSDictionary *jsonObj = [ [NSDictionary alloc]
-                                       initWithObjectsAndKeys :
-                                         error.description, @"error",
-                                        401, @"code",
-                                         nil
-                                    ];
-            
-                CDVPluginResult *pluginResult = [ CDVPluginResult
-                                                  resultWithStatus    : CDVCommandStatus_ERROR
-                                                  messageAsDictionary : jsonObj
-                                                ];
-            }
-        }];
-
-        
-        // The sendPluginResult method is thread-safe.
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    return ([PSTCKCardValidator validationStateForNumber:cardNumber validateCardBrand:validateCardBrand] == PSTCKCardValidationStateValid);
 }
 
++ (BOOL)isExpMonthValid:(NSString *)expMonth
+{
+    return ([PSTCKCardValidator validationStateForExpirationMonth:expMonth] == PSTCKCardValidationStateValid);
+}
+
++ (BOOL)isExpYearValid:(NSString *)expYear forMonth:(NSString *)expMonth
+{
+    return ([PSTCKCardValidator validationStateForExpirationYear:expYear forMonth:expMonth] == PSTCKCardValidationStateValid);
+}
+
++ (BOOL)isCvcValid:(NSString *)cvc withNumber:(NSString *)cardNumber
+{
+    return ([PSTCKCardValidator validationStateForCVC:cvc withNumber:[PSTCKCardValidator brandForNumber:cardNumber]] == PSTCKCardValidationStateValid);
+}
+
++ (BOOL)isCardValid:(PSTCKCardParams *)card
+{
+    return ([PSTCKCardValidator validationStateForCard:card] == PSTCKCardValidationStateValid);
+}
+
+- (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(int)errorCode
+{
+    NSMutableDictionary *returnInfo;
+    returnInfo = [NSMutableDictionary dictionaryWithCapacity:2];
+
+    [returnInfo setObject:errorMsg forKey:@"error"];
+    [returnInfo setObject:errorCode forKey:@"code"];
+
+    return returnInfo;
+}
+
+- (NSMutableDictionary*)setTokenMsg:(NSString *)token withCardLastDigits:(NSString *)last4
+{
+    NSMutableDictionary *returnInfo;
+    returnInfo = [NSMutableDictionary dictionaryWithCapacity:2];
+
+    [returnInfo setObject:token forKey:@"token"];
+    [returnInfo setObject:last4 forKey:@"last4"];
+
+    return returnInfo;
+}
+
+- (void)getToken:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"- PaystackPlugin getToken");
+
+    // Build a resultset for javascript callback.
+    CDVPluginResult* pluginResult = nil;
+    
+    // Check command.arguments here.
+    NSString* rawNumber = [command.arguments objectAtIndex:0];
+    NSString* rawExpMonth = [command.arguments objectAtIndex:1];
+    NSString* rawExpYear = [command.arguments objectAtIndex:2];
+    NSString* rawCvc = [command.arguments objectAtIndex:3];
+
+    if (! [self isCardNumberValid:rawNumber validateCardBrand:YES]) {
+        NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid card number" withErrorCode:421];
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+
+    } else if (! [self isExpMonthValid:rawExpMonth]) {
+
+        NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid expiration month." withErrorCode:424];
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+
+    } else if (! [self isExpYearValid:rawExpYear forMonth:rawExpMonth]) {
+
+        NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid expiration year." withErrorCode:425];
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+
+    } else if (! [self isCvcValid:rawCvc withNumber:rawNumber]) {
+
+        NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid cvc code." withErrorCode:423];
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+
+    } else {
+        PSTCKCardParams *cardParam = [[PSTCKCardParams alloc] init];
+        cardParam.number = rawNumber;
+        cardParam.expMonth = rawExpMonth;
+        cardParam.expYear = rawExpYear;
+        cardParam.cvc = rawCvc;
+
+        if ([self isCardValid:cardParam]) {
+            [[PSTCKAPIClient sharedClient] createTokenWithCard:cardParam resultHandler:^(PSTCKToken token, NSError error) {
+                if (token) {
+                    NSMutableDictionary *returnInfo = [self setTokenMsg:token.token withCardLastDigits:token.last4];
+
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
+                }
+
+                if (error) {
+                    NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error retrieving token for card." withErrorCode:401];
+
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+                }
+            }];
+        } else {
+            NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid Card." withErrorCode:404];
+
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+        }
+
+        
+    }
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
 @end

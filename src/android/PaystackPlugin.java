@@ -117,7 +117,7 @@ public class PaystackPlugin extends CordovaPlugin {
 		//validate cvc
 		String cvc = args.getString(3).trim();
 		if (isEmpty(cvc)) {
-			handleError("Empty cvc", 422);
+			handleError("Empty cvc code", 422);
 			return;
 		}
 		
@@ -126,7 +126,7 @@ public class PaystackPlugin extends CordovaPlugin {
 
 		//check that it's valid
 		if (!card.validCVC()) {
-			handleError("Invalid cvc", 423);
+			handleError("Invalid cvc code", 423);
 			return;
 		}
 
@@ -134,7 +134,7 @@ public class PaystackPlugin extends CordovaPlugin {
 		Integer expiryMonth = args.getInt(1);
 		
 		if (expiryMonth < 1) {
-			handleError("Invalid month", 424);
+			handleError("Invalid expiration month", 424);
 			return;
 		}
 
@@ -145,7 +145,7 @@ public class PaystackPlugin extends CordovaPlugin {
 		Integer expiryYear = args.getInt(2);
 		
 		if (expiryYear < 1) {
-			handleError("Invalid year", 425);
+			handleError("Invalid expiration year", 425);
 			return;
 		}
 
@@ -154,7 +154,7 @@ public class PaystackPlugin extends CordovaPlugin {
 
 		//validate expiry
 		if (!card.validExpiryDate()) {
-			handleError("Invalid expiry date", 426);
+			handleError("Invalid expiration date", 426);
 		}
     }
 
