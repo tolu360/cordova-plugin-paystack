@@ -28,8 +28,8 @@
         </config-file>
 
         <framework src="src/ios/Paystack.framework" custom="true" />
-        <header-file src="PaystackPlugin.h" />
-        <source-file src="PaystackPlugin.m" />
+        <header-file src="src/ios/PaystackPlugin.h" />
+        <source-file src="src/ios/PaystackPlugin.m" />
 
     </platform>
 
