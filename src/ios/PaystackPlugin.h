@@ -11,7 +11,7 @@
 + (BOOL)isExpYearValid:(NSString *)expYear forMonth:(NSString *)expMonth;
 + (BOOL)isCvcValid:(NSString *)cvc withNumber:(NSString *)cardNumber;
 + (BOOL)isCardValid:(PSTCKCardParams *)card;
-- (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(NSNumber *)errorCode;
+- (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(int)errorCode;
 - (NSMutableDictionary*)setTokenMsg:(NSString *)token withCardLastDigits:(NSString *)last4;
 - (void)getToken:(CDVInvokedUrlCommand*)command;
 

@@ -38,7 +38,7 @@
     return ([PSTCKCardValidator validationStateForCard:card] == PSTCKCardValidationStateValid);
 }
 
-- (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(NSNumber *)errorCode
+- (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(int)errorCode
 {
     NSMutableDictionary *returnInfo;
     returnInfo = [NSMutableDictionary dictionaryWithCapacity:2];
@@ -108,13 +108,13 @@
                 if (token) {
                     NSMutableDictionary *returnInfo = [self setTokenMsg:token.tokenId withCardLastDigits:token.last4];
 
-                    __block pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
+                    __block CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
                 }
 
                 if (error) {
                     NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error retrieving token for card." withErrorCode:401];
 
-                    __block pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+                    __block CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
                 }
             }];
         } else {
