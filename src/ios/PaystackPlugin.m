@@ -13,31 +13,31 @@
     [Paystack setDefaultPublishableKey:paystackPublishableKey];
 }
 
-+ (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand
+- (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand
 {
     BOOL isValid = ([PSTCKCardValidator validationStateForNumber:cardNumber validatingCardBrand:validateCardBrand] == PSTCKCardValidationStateValid);
     return isValid;
 }
 
-+ (BOOL)isExpMonthValid:(NSString *)expMonth
+- (BOOL)isExpMonthValid:(NSString *)expMonth
 {
     BOOL isValid = ([PSTCKCardValidator validationStateForExpirationMonth:expMonth] == PSTCKCardValidationStateValid);
     return isValid;
 }
 
-+ (BOOL)isExpYearValid:(NSString *)expYear forMonth:(NSString *)expMonth
+- (BOOL)isExpYearValid:(NSString *)expYear forMonth:(NSString *)expMonth
 {
     BOOL isValid = ([PSTCKCardValidator validationStateForExpirationYear:expYear inMonth:expMonth] == PSTCKCardValidationStateValid);
     return isValid;
 }
 
-+ (BOOL)isCvcValid:(NSString *)cvc withNumber:(NSString *)cardNumber
+- (BOOL)isCvcValid:(NSString *)cvc withNumber:(NSString *)cardNumber
 {
     BOOL isValid = ([PSTCKCardValidator validationStateForCVC:cvc cardBrand:[PSTCKCardValidator brandForNumber:cardNumber]] == PSTCKCardValidationStateValid);
     return isValid;
 }
 
-+ (BOOL)isCardValid:(PSTCKCardParams *)card
+- (BOOL)isCardValid:(PSTCKCardParams *)card
 {
     BOOL isValid = ([PSTCKCardValidator validationStateForCard:card] == PSTCKCardValidationStateValid);
     return isValid;
