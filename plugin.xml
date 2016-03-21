@@ -33,7 +33,7 @@
         <header-file src="src/ios/Paystack.framework/Headers/Paystack.h" />
         <header-file src="src/ios/Paystack.framework/Headers/PaystackError.h" />
         <header-file src="src/ios/Paystack.framework/Headers/PSTCKAPIClient.h" />
-        <header-file src="src/ios/Paystack.framework/Headers/PSTCKAPIResposeDecodable.h" />
+        <header-file src="src/ios/Paystack.framework/Headers/PSTCKAPIResponseDecodable.h" />
         <header-file src="src/ios/Paystack.framework/Headers/PSTCKCard.h" />
         <header-file src="src/ios/Paystack.framework/Headers/PSTCKCardBrand.h" />
         <header-file src="src/ios/Paystack.framework/Headers/PSTCKCardParams.h" />
