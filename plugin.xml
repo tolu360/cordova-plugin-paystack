@@ -30,7 +30,7 @@
         <header-file src="src/ios/PaystackPlugin.h" />
         <source-file src="src/ios/PaystackPlugin.m" />
 
-        <header-file src="src/ios/Paystack.framework/Headers/Paystack.h" />
+        <!-- <header-file src="src/ios/Paystack.framework/Headers/Paystack.h" />
         <header-file src="src/ios/Paystack.framework/Headers/PaystackError.h" />
         <header-file src="src/ios/Paystack.framework/Headers/PSTCKAPIClient.h" />
         <header-file src="src/ios/Paystack.framework/Headers/PSTCKAPIResponseDecodable.h" />
@@ -41,13 +41,13 @@
         <header-file src="src/ios/Paystack.framework/Headers/PSTCKCardValidator.h" />
         <header-file src="src/ios/Paystack.framework/Headers/PSTCKFormEncodable.h" />
         <header-file src="src/ios/Paystack.framework/Headers/PSTCKPaymentCardTextField.h" />
-        <header-file src="src/ios/Paystack.framework/Headers/PSTCKToken.h" />
+        <header-file src="src/ios/Paystack.framework/Headers/PSTCKToken.h" /> -->
 
-        <source-file src="src/ios/Paystack.framework" framework="true" />
+        <!-- <source-file src="src/ios/Paystack.framework" framework="true" /> -->
 
         <framework src="QuartzCore.framework"/>
         <framework src="UIKit.framework"/>
-        <!-- <framework src="src/ios/Paystack.framework" custom="true" /> -->
+        <framework src="src/ios/Paystack.framework" custom="true" />
         
 
     </platform>
