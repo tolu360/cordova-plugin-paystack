@@ -27,6 +27,9 @@
             </feature>
         </config-file>
 
+        <framework src="QuartzCore.framework"/>
+        <framework src="UIKit.framework"/>
+
         <framework src="src/ios/Paystack.framework" custom="true" />
         <header-file src="src/ios/PaystackPlugin.h" />
         <source-file src="src/ios/PaystackPlugin.m" />
