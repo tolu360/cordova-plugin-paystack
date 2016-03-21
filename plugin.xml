@@ -47,7 +47,7 @@
 
         <framework src="QuartzCore.framework"/>
         <framework src="UIKit.framework"/>
-        <framework src="src/ios/Paystack.framework" custom="true" />
+        <!-- <framework src="src/ios/Paystack.framework" custom="true" /> -->
         
 
     </platform>
