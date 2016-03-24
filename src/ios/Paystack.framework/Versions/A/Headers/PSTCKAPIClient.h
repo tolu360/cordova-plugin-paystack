@@ -5,7 +5,7 @@
 
 #import <Foundation/Foundation.h>
 
-static NSString *const __nonnull PSTCKSDKVersion = @"0.1.0";
+static NSString *const __nonnull PSTCKSDKVersion = @"1.0.0";
 
 @class PSTCKCard, PSTCKCardParams, PSTCKToken;
 

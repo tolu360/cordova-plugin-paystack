@@ -65,6 +65,36 @@
     return returnInfo;
 }
 
+- (BOOL)cardParamsAreValid:(NSString *)cardNumber withMonth:(NSString *)expMonth withYear:(NSString *)expYear andWithCvc:(NSString *)cvc
+{
+    if (! [self isCardNumberValid:cardNumber validateCardBrand:YES]) {
+        self.errorMsg = @"Invalid card number.";
+        self.errorCode = 421;
+        return NO;
+    }
+
+    if (! [self isExpMonthValid:expMonth]) {
+        self.errorMsg = @"Invalid expiration month.";
+        self.errorCode = 424;
+        return NO;
+    }
+
+    if (! [self isExpYearValid:expYear forMonth:expMonth]) {
+        self.errorMsg = @"Invalid expiration year.";
+        self.errorCode = 425;
+        return NO;
+    }
+
+    if (! [self isCvcValid:cvc withNumber:cardNumber]) {
+        self.errorMsg = @"Invalid cvc code.";
+        self.errorCode = 423;
+        return NO;
+    }
+
+    return YES;
+
+}
+
 - (void)getToken:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"- PaystackPlugin getToken");
@@ -78,34 +108,17 @@
     NSString* rawExpYear = [command.arguments objectAtIndex:2];
     NSString* rawCvc = [command.arguments objectAtIndex:3];
 
-    if (! [self isCardNumberValid:rawNumber validateCardBrand:YES]) {
-        NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid card number" withErrorCode:421];
+    if (! [self cardParamsAreValid:rawNumber withMonth:rawExpMonth withYear:rawExpYear andWithCvc:rawCvc]) {
 
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
-
-    } else if (! [self isExpMonthValid:rawExpMonth]) {
-
-        NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid expiration month." withErrorCode:424];
-
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
-
-    } else if (! [self isExpYearValid:rawExpYear forMonth:rawExpMonth]) {
-
-        NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid expiration year." withErrorCode:425];
-
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
-
-    } else if (! [self isCvcValid:rawCvc withNumber:rawNumber]) {
-
-        NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid cvc code." withErrorCode:423];
+        NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
 
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
 
     } else {
         PSTCKCardParams *cardParam = [[PSTCKCardParams alloc] init];
         cardParam.number = rawNumber;
-        cardParam.expMonth = rawExpMonth;
-        cardParam.expYear = rawExpYear;
+        cardParam.expMonth = [rawExpMonth integerValue];
+        cardParam.expYear = [rawExpYear integerValue];
         cardParam.cvc = rawCvc;
 
         if ([self isCardValid:cardParam]) {
