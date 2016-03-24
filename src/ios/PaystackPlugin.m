@@ -100,7 +100,7 @@
     NSLog(@"- PaystackPlugin getToken");
 
     // Build a resultset for javascript callback.
-    CDVPluginResult* pluginResult = nil;
+    __block CDVPluginResult* pluginResult = nil;
     
     // Check command.arguments here.
     NSString* rawNumber = [command.arguments objectAtIndex:0];
@@ -126,13 +126,13 @@
                 if (token) {
                     NSMutableDictionary *returnInfo = [self setTokenMsg:token.tokenId withCardLastDigits:token.last4];
 
-                    __block CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
                 }
 
                 if (error) {
                     NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error retrieving token for card." withErrorCode:401];
 
-                    __block CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
                 }
             }];
         } else {
