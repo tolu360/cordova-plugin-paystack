@@ -6,8 +6,8 @@
 
 @interface PaystackPlugin : CDVPlugin
 
-@property (nonatomic, nullable) NSString *errorMsg;
-@property (nonatomic, nullable) int *errorCode;
+@property (nonatomic) NSString *errorMsg;
+@property (nonatomic) int errorCode;
 
 - (void)pluginInitialize;
 - (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand;
