@@ -153,6 +153,11 @@
 
                         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
                     }
+
+                    if (pluginResult != nil) {
+                        NSLog(@"- PaystackPlugin sendPluginResult");
+                        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                    }
                 }];
             } else {
                 NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid Card." withErrorCode:404];
