@@ -110,9 +110,6 @@
 - (void)getToken:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"- PaystackPlugin getToken");
-
-    // Build a resultset for javascript callback.
-    __block CDVPluginResult* pluginResult = nil;
     
     // Check command.arguments here.
     NSString* rawNumber = [command.arguments objectAtIndex:0];
@@ -120,42 +117,47 @@
     NSString* rawExpYear = [command.arguments objectAtIndex:2];
     NSString* rawCvc = [command.arguments objectAtIndex:3];
 
-    if (! [self cardParamsAreValid:rawNumber withMonth:rawExpMonth withYear:rawExpYear andWithCvc:rawCvc]) {
+    [self.commandDelegate runInBackground:^{
+        // Build a resultset for javascript callback.
+        __block CDVPluginResult* pluginResult = nil;
 
-        NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
+        if (! [self cardParamsAreValid:rawNumber withMonth:rawExpMonth withYear:rawExpYear andWithCvc:rawCvc]) {
 
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
-
-    } else {
-        PSTCKCardParams *cardParam = [[PSTCKCardParams alloc] init];
-        cardParam.number = rawNumber;
-        cardParam.expMonth = [rawExpMonth integerValue];
-        cardParam.expYear = [rawExpYear integerValue];
-        cardParam.cvc = rawCvc;
-
-        if ([self isCardValid:cardParam]) {
-            [[PSTCKAPIClient sharedClient] createTokenWithCard:cardParam completion:^(PSTCKToken *token, NSError *error) {
-                if (token) {
-                    NSMutableDictionary *returnInfo = [self setTokenMsg:token.tokenId withCardLastDigits:token.last4];
-
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
-                }
-
-                if (error) {
-                    NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error retrieving token for card." withErrorCode:401];
-
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
-                }
-            }];
-        } else {
-            NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid Card." withErrorCode:404];
+            NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
 
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
-        }
+
+        } else {
+            PSTCKCardParams *cardParam = [[PSTCKCardParams alloc] init];
+            cardParam.number = rawNumber;
+            cardParam.expMonth = [rawExpMonth integerValue];
+            cardParam.expYear = [rawExpYear integerValue];
+            cardParam.cvc = rawCvc;
+
+            if ([self isCardValid:cardParam]) {
+                [[PSTCKAPIClient sharedClient] createTokenWithCard:cardParam completion:^(PSTCKToken *token, NSError *error) {
+                    if (token) {
+                        NSMutableDictionary *returnInfo = [self setTokenMsg:token.tokenId withCardLastDigits:token.last4];
+
+                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
+                    }
+
+                    if (error) {
+                        NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error retrieving token for card." withErrorCode:401];
+
+                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+                    }
+                }];
+            } else {
+                NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid Card." withErrorCode:404];
+
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+            }
 
         
-    }
-    
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }
+        // The sendPluginResult method is thread-safe.
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
 }
 @end
