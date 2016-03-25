@@ -10,6 +10,13 @@
 - (void)pluginInitialize
 {
     NSLog(@"- PaystackPlugin pluginInitialize");
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+    
+}
+
+- (void)finishLaunching:(NSNotification *)notification
+{
     NSString* paystackPublishableKey = [self.commandDelegate.settings objectForKey:@"publishableKey"];
     [Paystack setDefaultPublishableKey:paystackPublishableKey];
 
