@@ -122,7 +122,7 @@
         cardParam.cvc = rawCvc;
 
         if ([self isCardValid:cardParam]) {
-            [[PSTCKAPIClient sharedClient] createTokenWithCard:cardParam completion:^(PSTCKToken *token, NSError *error) {
+            [[PSTCKAPIClient sharedClient] createTokenWithCard:cardParam completion:^(PSTCKToken __nullable *token, NSError __nullable *error) {
                 if (token) {
                     NSMutableDictionary *returnInfo = [self setTokenMsg:token.tokenId withCardLastDigits:token.last4];
 
