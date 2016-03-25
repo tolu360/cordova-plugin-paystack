@@ -144,6 +144,7 @@
                         NSLog(@"token result: %@", returnInfo);
 
                         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
+                        NSLog(@"- PaystackPlugin pluginResult is set");
                     }
 
                     if (error) {
@@ -162,6 +163,7 @@
         
         }
         // The sendPluginResult method is thread-safe.
+        NSLog(@"- PaystackPlugin sendPluginResult");
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
