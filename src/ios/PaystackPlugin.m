@@ -17,6 +17,8 @@
 
 - (void)finishLaunching:(NSNotification *)notification
 {
+    NSLog(@"- PaystackPlugin finishLaunching");
+    
     NSString* paystackPublishableKey = [self.commandDelegate.settings objectForKey:@"publishableKey"];
     [Paystack setDefaultPublishableKey:paystackPublishableKey];
 
