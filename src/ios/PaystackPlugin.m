@@ -163,8 +163,11 @@
         
         }
         // The sendPluginResult method is thread-safe.
-        NSLog(@"- PaystackPlugin sendPluginResult");
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        if (pluginResult !== nil) {
+            NSLog(@"- PaystackPlugin sendPluginResult");
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }
+       
     }];
 }
 @end
