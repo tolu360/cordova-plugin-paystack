@@ -9,8 +9,11 @@
 
 - (void)pluginInitialize
 {
+    NSLog(@"- PaystackPlugin pluginInitialize");
     NSString* paystackPublishableKey = [self.commandDelegate.settings objectForKey:@"publishableKey"];
     [Paystack setDefaultPublishableKey:paystackPublishableKey];
+
+    NSLog(@"publishableKey: %@", publishableKey);
 }
 
 - (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand
@@ -122,7 +125,7 @@
         cardParam.cvc = rawCvc;
 
         if ([self isCardValid:cardParam]) {
-            [[PSTCKAPIClient sharedClient] createTokenWithCard:cardParam completion:^(PSTCKToken __nullable *token, NSError __nullable *error) {
+            [[PSTCKAPIClient sharedClient] createTokenWithCard:cardParam completion:^(PSTCKToken *token, NSError *error) {
                 if (token) {
                     NSMutableDictionary *returnInfo = [self setTokenMsg:token.tokenId withCardLastDigits:token.last4];
 
