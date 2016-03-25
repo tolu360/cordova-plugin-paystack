@@ -19,10 +19,10 @@
 {
     NSLog(@"- PaystackPlugin pageDidLoad");
 
-    NSString* paystackPublishableKey = [self.commandDelegate.settings objectForKey:@"publishableKey"];
+    NSString* paystackPublishableKey = [self.commandDelegate.settings objectForKey:[@"publishableKey" lowercaseString]];
     [Paystack setDefaultPublishableKey:paystackPublishableKey];
 
-    NSLog(@"publishableKey: %@", [self.commandDelegate.settings objectForKey:@"publishableKey"]);
+    NSLog(@"publishableKey: %@", [self.commandDelegate.settings objectForKey:[@"publishableKey" lowercaseString]]);
 }
 
 - (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand
