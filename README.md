@@ -1,6 +1,6 @@
 # Cordova/PhoneGap Wrapper for Paystack SDK
 
-for Android by [Arttitude 360](http://www.arttitude360.com)
+for Android & iOS by [Arttitude 360](http://www.arttitude360.com)
 
 ## Index
 
@@ -16,8 +16,8 @@ for Android by [Arttitude 360](http://www.arttitude360.com)
 
 ## 1. Description
 
-This plugin allows to add Paystack Payments to your application using the [Paystack Mobile SDK Android](https://github.com/PaystackHQ/paystack-android) library. 
-While there are a million ways to build mobile applications these days, there are only very few ways to stay secure. The native Paystack SDK uses your pulishable/public key to generate a one-time token to be used to charge a card - this plugin allows you to do all that in your Cordova/PhoneGap app without worrying about your secret key being compromised. Your secret keys do not belong in version control and you should never use them in client-side code or in a Cordova/PhoneGap application.
+This plugin allows to add Paystack Payments to your application using the [Paystack Mobile Android SDK](https://github.com/PaystackHQ/paystack-android) and the [Paystack Mobile iOS SDK](https://github.com/PaystackHQ/paystack-ios) libraries. 
+While there are a million ways to build mobile applications these days, there are only very few ways to stay secure. The native Paystack SDK uses your pulishable/public key to generate a one-time token to be used to charge a card (on your backend/server) - this plugin allows you to do all that in your Cordova/PhoneGap app without worrying about your secret key being compromised. Your secret keys do not belong in version control and you should never use them in client-side code or in a Cordova/PhoneGap application.
 * Compatible with [Cordova Plugman](https://github.com/apache/cordova-plugman).
 * Officially supported by [PhoneGap Build](https://build.phonegap.com/plugins).
 
@@ -38,12 +38,18 @@ $ phonegap local plugin add cordova-plugin-paystack
 
 PaystackPlugin.js is brought in automatically. There is no need to change or add anything in your html.
 
-Add ` xmlns:android="http://schemas.android.com/apk/res/android"` to the `widget` tag of the `config.xml` file in the root of your project, while at it, include the following lines within a `platform` `(<platform name="android">)`tag in your `config.xml`:
+To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/android"` to the `widget` tag of the `config.xml` file in the root of your project, while at it, include the following lines within a `platform` `(<platform name="android">)`tag in your `config.xml`:
 
 ```xml
 <config-file target="AndroidManifest.xml" parent="application">
     <meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
 </config-file>
+```
+
+To build for iOS, add the `publishableKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
+
+```xml
+<preference name="publishableKey" value="INSERT-PUBLIC-KEY-HERE" />
 ```
 
 ### Manually
@@ -68,12 +74,18 @@ You'd better use the CLI, but here goes:
 
 Android: Copy `PaystackPlugin.java` to `platforms/android/src/com/arttitude360/cordova` (create the folders)
 
-Add ` xmlns:android="http://schemas.android.com/apk/res/android"` to the `widget` tag of the `config.xml` file in the root of your project, while at it, include the following lines within a `platform` `(<platform name="android">)`tag in your `config.xml`:
+To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/android"` to the `widget` tag of the `config.xml` file in the root of your project, while at it, include the following lines within a `platform` `(<platform name="android">)`tag in your `config.xml`:
 
 ```xml
 <config-file target="AndroidManifest.xml" parent="application">
     <meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
 </config-file>
+```
+
+To build for iOS, add the `publishableKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
+
+```xml
+<preference name="publishableKey" value="INSERT-PUBLIC-KEY-HERE" />
 ```
 
 
@@ -88,12 +100,18 @@ Just add the following xml to your `config.xml` to always use the latest version
 
 PaystackPlugin.js is brought in automatically. There is no need to change or add anything in your html.
 
-Add ` xmlns:android="http://schemas.android.com/apk/res/android"` to the `widget` tag of the `config.xml` file in the root of your project, while at it, include the following lines within a `platform` `(<platform name="android">)`tag in your `config.xml`:
+To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/android"` to the `widget` tag of the `config.xml` file in the root of your project, while at it, include the following lines within a `platform` `(<platform name="android">)`tag in your `config.xml`:
 
 ```xml
 <config-file target="AndroidManifest.xml" parent="application">
     <meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
 </config-file>
+```
+
+To build for iOS, add the `publishableKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
+
+```xml
+<preference name="publishableKey" value="INSERT-PUBLIC-KEY-HERE" />
 ```
 
 ## 3. Usage
@@ -134,8 +152,8 @@ Explaining the arguments to `window.PaystackPlugin.getToken`:
 + {Function} errorCallback - callback to be invoked on failure to acquire a valid token.
  * A single object argument will be passed which has 2 keys: "error" is a string containing a description of the error, "code" is an arbitrary error code.
 + cardNumber: the card number as a String without any seperator e.g 5555555555554444
-+ expiryMonth: the expiry month as an integer ranging from 1-12 e.g 10 (October)
-+ expiryYear: the expiry year as an integer e.g 2015
++ expiryMonth: the expiry month as an integer ranging from 1-12 e.g 10 (October) (2 digits: very !important for iOS)
++ expiryYear: the expiry year as an integer e.g 15 (2 digits: very !important for iOS)
 + cvc: the card security code as a String e.g 123
 
 ### Charging the tokens. 
@@ -168,7 +186,9 @@ Perhaps needless to say, this plugin leverages the [Paystack Android SDK](https:
 
 ## 5. CHANGELOG
 
-1.0.1: initial version supporting Android.
+1.0.1: Initial version supporting Android.
+1.0.3: Code clean up and addition of arbitrary error codes.
+1.1.0: Added iOS support and bumped up paystack android library to v1.2 - making 16 the min sdk you should target.
 
 ## 6. License
 
