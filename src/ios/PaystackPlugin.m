@@ -13,7 +13,7 @@
     NSString* paystackPublishableKey = [self.commandDelegate.settings objectForKey:@"publishableKey"];
     [Paystack setDefaultPublishableKey:paystackPublishableKey];
 
-    NSLog(@"publishableKey: %@", publishableKey);
+    NSLog(@"publishableKey: %@", paystackPublishableKey);
 }
 
 - (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand
