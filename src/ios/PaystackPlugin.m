@@ -137,12 +137,16 @@
             if ([self isCardValid:cardParam]) {
                 [[PSTCKAPIClient sharedClient] createTokenWithCard:cardParam completion:^(PSTCKToken *token, NSError *error) {
                     if (token) {
+                        NSLog(@"- PaystackPlugin Token is set");
+                        
                         NSMutableDictionary *returnInfo = [self setTokenMsg:token.tokenId withCardLastDigits:token.last4];
+                        NSLog(@"token is set: %@", token.tokenId);
 
                         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
                     }
 
                     if (error) {
+                        NSLog(@"- PaystackPlugin TokenError is set");
                         NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error retrieving token for card." withErrorCode:401];
 
                         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
