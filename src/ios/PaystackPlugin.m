@@ -11,18 +11,18 @@
 {
     NSLog(@"- PaystackPlugin pluginInitialize");
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pageDidLoad) name:CDVPageDidLoadNotification object:nil];
     
 }
 
-- (void)finishLaunching:(NSNotification *)notification
+- (void)pageDidLoad
 {
-    NSLog(@"- PaystackPlugin finishLaunching");
-    
+    NSLog(@"- PaystackPlugin pageDidLoad");
+
     NSString* paystackPublishableKey = [self.commandDelegate.settings objectForKey:@"publishableKey"];
     [Paystack setDefaultPublishableKey:paystackPublishableKey];
 
-    NSLog(@"publishableKey: %@", paystackPublishableKey);
+    NSLog(@"publishableKey: %@", [self.commandDelegate.settings objectForKey:@"publishableKey"]);
 }
 
 - (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand

@@ -10,7 +10,7 @@
 @property (nonatomic) int errorCode;
 
 - (void)pluginInitialize;
-- (void)finishLaunching:(NSNotification *)notification;
+- (void)pageDidLoad;
 - (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand;
 - (BOOL)isExpMonthValid:(NSString *)expMonth;
 - (BOOL)isExpYearValid:(NSString *)expYear forMonth:(NSString *)expMonth;
