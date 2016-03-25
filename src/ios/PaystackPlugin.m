@@ -141,6 +141,7 @@
                         
                         NSMutableDictionary *returnInfo = [self setTokenMsg:token.tokenId withCardLastDigits:token.last4];
                         NSLog(@"token is set: %@", token.tokenId);
+                        NSLog(@"token result: %@", returnInfo);
 
                         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
                     }
