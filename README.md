@@ -139,8 +139,8 @@ function onDeviceReady() {
         console.log('failure: ', resp);
       },
       4123450131001381,
-      5,
-      2016,
+      05,
+      16,
       883);
 }
 ```
@@ -186,9 +186,9 @@ Perhaps needless to say, this plugin leverages the [Paystack Android SDK](https:
 
 ## 5. CHANGELOG
 
-1.0.1: Initial version supporting Android.
-1.0.3: Code clean up and addition of arbitrary error codes.
-1.1.0: Added iOS support and bumped up paystack android library to v1.2 - making 16 the min sdk you should target.
+- 1.0.1: Initial version supporting Android.
+- 1.0.3: Code clean up and addition of arbitrary error codes.
+- 1.1.0: Added iOS support and bumped up paystack android library to v1.2 - making 16 the min sdk you should target.
 
 ## 6. License
 
