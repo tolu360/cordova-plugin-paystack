@@ -182,7 +182,7 @@ Send the token to your server and create a charge by calling the Paystack REST A
 ## 4. CREDITS
 
 This plugin uses the [cordova-custom-config plugin](https://github.com/dpa99c/cordova-custom-config) to achieve easy and reversible changes to your application's `AndroidManifest.xml` file.
-Perhaps needless to say, this plugin leverages the [Paystack Android SDK](https://github.com/PaystackHQ/paystack-android) for all the heavy liftings.
+Perhaps needless to say, this plugin leverages the [Paystack Android SDK](https://github.com/PaystackHQ/paystack-android) and the [Paystack iOS SDK](https://github.com/PaystackHQ/paystack-ios) for all the heavy liftings.
 
 ## 5. CHANGELOG
 
