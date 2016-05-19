@@ -41,9 +41,11 @@ PaystackPlugin.js is brought in automatically. There is no need to change or add
 To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/android"` to the `widget` tag of the `config.xml` file in the root of your project, while at it, include the following lines within a `platform` `(<platform name="android">)`tag in your `config.xml`:
 
 ```xml
-<config-file target="AndroidManifest.xml" parent="application">
-    <meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
-</config-file>
+<platform name="android">
+    <config-file target="AndroidManifest.xml" parent="application">
+      	<meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
+    </config-file>
+</platform>
 ```
 
 To build for iOS, add the `publishableKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
@@ -77,9 +79,11 @@ Android: Copy `PaystackPlugin.java` to `platforms/android/src/com/arttitude360/c
 To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/android"` to the `widget` tag of the `config.xml` file in the root of your project, while at it, include the following lines within a `platform` `(<platform name="android">)`tag in your `config.xml`:
 
 ```xml
-<config-file target="AndroidManifest.xml" parent="application">
-    <meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
-</config-file>
+<platform name="android">
+    <config-file target="AndroidManifest.xml" parent="application">
+      	<meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
+    </config-file>
+</platform>
 ```
 
 To build for iOS, add the `publishableKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
@@ -103,9 +107,11 @@ PaystackPlugin.js is brought in automatically. There is no need to change or add
 To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/android"` to the `widget` tag of the `config.xml` file in the root of your project, while at it, include the following lines within a `platform` `(<platform name="android">)`tag in your `config.xml`:
 
 ```xml
-<config-file target="AndroidManifest.xml" parent="application">
-    <meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
-</config-file>
+<platform name="android">
+    <config-file target="AndroidManifest.xml" parent="application">
+      	<meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
+    </config-file>
+</platform>
 ```
 
 To build for iOS, add the `publishableKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
