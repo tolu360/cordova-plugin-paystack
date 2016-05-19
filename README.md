@@ -52,6 +52,8 @@ To build for iOS, add the `publishableKey` preference tag to the `config.xml` fi
 <preference name="publishableKey" value="INSERT-PUBLIC-KEY-HERE" />
 ```
 
+
+
 ### Manually
 You'd better use the CLI, but here goes:
 
@@ -112,6 +114,11 @@ To build for iOS, add the `publishableKey` preference tag to the `config.xml` fi
 
 ```xml
 <preference name="publishableKey" value="INSERT-PUBLIC-KEY-HERE" />
+```
+###Build the your app
+Before you try to run your app, you should build it first to install all native dependencies in android
+```
+cordova build ios|android
 ```
 
 ## 3. Usage
