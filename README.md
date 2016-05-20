@@ -144,10 +144,10 @@ function onDeviceReady() {
         // Something went wrong, oops - perhaps an invalid card.
         console.log('failure: ', resp);
       },
-      4123450131001381,
-      05,
-      16,
-      883);
+      '4123450131001381',
+      '05',
+      '16',
+      '883');
 }
 ```
 
