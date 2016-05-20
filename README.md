@@ -31,6 +31,11 @@ Using the Cordova CLI and the [Cordova Plugin Registry](http://plugins.cordova.i
 $ cordova plugin add cordova-plugin-paystack
 ```
 
+Or directly from the repo (most especially if you run into any issues building for IOS with the command above)
+```
+$ cordova plugin add https://github.com/tolu360/Cordova-Plugin-Paystack
+```
+
 Or using the phonegap CLI
 ```
 $ phonegap local plugin add cordova-plugin-paystack
