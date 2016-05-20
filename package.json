@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/tolu360/Cordova-Plugin-Paystack.git"
+    "url": "git+https://github.com/tolu360/Cordova-Plugin-Paystack.git"
   },
   "keywords": [
     "paystack",
