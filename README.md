@@ -36,6 +36,13 @@ Or directly from the repo (most especially if you run into any issues building f
 $ cordova plugin add https://github.com/tolu360/Cordova-Plugin-Paystack
 ```
 
+
+### << --- Fixing Build Errors [iOS]
+
+****Installing this plugin directly from Cordova Registry results in Xcode using a broken `Paystack.framework`, this may be because the current publish procedure to NPM breaks symlinks [CB-6092](https://issues.apache.org/jira/browse/CB-6092). Please install the plugin with `$ cordova plugin add https://github.com/tolu360/Cordova-Plugin-Paystack` OR through a locally cloned copy OR replace the `Paystack.framework` file found at `~PROJECT_FOLDER/platforms/ios/PROJECT_ID/Plugins/cordova-plugin-paystack` with the clean copy you should [download and extract](https://www.dropbox.com/s/ykt5h0xjjkfwmk6/Paystack.framework.zip?dl=0) from https://www.dropbox.com/s/ykt5h0xjjkfwmk6/Paystack.framework.zip?dl=0 after installation.****
+
+### ------------------------------------------ >>
+
 Or using the phonegap CLI
 ```
 $ phonegap local plugin add cordova-plugin-paystack
