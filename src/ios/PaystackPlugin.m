@@ -175,4 +175,16 @@
        
     }];
 }
+
+- (void)chargeCard:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"- PaystackPlugin chargeCard");
+
+    CDVPluginResult* pluginResult = nil;
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Method is not supported on iOS yet."];
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 @end

@@ -18,11 +18,23 @@ function PaystackPlugin() {}
  * @param {Array} The card details in the order - cardNumber, expiryMonth, expiryYear, cvc.
  */
 PaystackPlugin.prototype.getToken = function(successCallback, errorCallback, cardNumber, expiryMonth, expiryYear, cvc) {
-	return cordova.exec(successCallback,
+	return cordova.exec(
+		successCallback,
 		errorCallback,
 		'PaystackPlugin',
 		'getToken',
-		[cardNumber, expiryMonth, expiryYear, cvc]);
+		[cardNumber, expiryMonth, expiryYear, cvc]
+	);
+};
+
+PaystackPlugin.prototype.chargeCard = function(successCallback, errorCallback, cardNumber, expiryMonth, expiryYear, cvc, email, amountInKobo) {
+	return cordova.exec(
+		successCallback,
+		errorCallback,
+		'PaystackPlugin',
+		'chargeCard',
+		[cardNumber, expiryMonth, expiryYear, cvc, email, amountInKobo]
+	);
 };
 
 module.exports = new PaystackPlugin();

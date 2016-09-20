@@ -1,7 +1,7 @@
 {
   "name": "cordova-plugin-paystack",
-  "version": "1.1.2",
-  "description": "This plugin allows to add Paystack Payments to your application using Paystack Mobile Android and iOS SDK Native libraries",
+  "version": "2.0.0",
+  "description": "This plugin allows to add Paystack Payments to your application using Paystack Native Mobile Android and iOS SDKs",
   "cordova": {
     "id": "cordova-plugin-paystack",
     "platforms": [
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tolu360/Cordova-Plugin-Paystack.git"
+    "url": "git+https://github.com/tolu360/cordova-plugin-paystack.git"
   },
   "keywords": [
     "paystack",
@@ -31,9 +31,9 @@
     }
   ],
   "author": "Tolu Olowu (Arttitude360)",
-  "license": "MIT, see LICENSE.md for details",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tolu360/Cordova-Plugin-Paystack/issues"
+    "url": "https://github.com/tolu360/cordova-plugin-paystack/issues"
   },
-  "homepage": "https://github.com/tolu360/Cordova-Plugin-Paystack#readme"
+  "homepage": "https://github.com/tolu360/cordova-plugin-paystack#readme"
 }

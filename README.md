@@ -54,6 +54,8 @@ To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/an
 
 ```xml
 <platform name="android">
+    ...
+    <preference name="android-minSdkVersion" value="16" />
     <config-file target="AndroidManifest.xml" parent="application">
       	<meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
     </config-file>
@@ -63,8 +65,12 @@ To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/an
 To build for iOS, add the `publishableKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
 
 ```xml
-<preference name="publishableKey" value="INSERT-PUBLIC-KEY-HERE" />
+<platform name="ios">
+    ...
+    <preference name="publishableKey" value="INSERT-PUBLIC-KEY-HERE" />
+</platform>
 ```
+You must not forget to build your project again - each time you edit native code. Run `cordova build ios/android` or similar variants.
 
 ### Manually
 You'd better use the CLI, but here goes:
@@ -92,6 +98,7 @@ To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/an
 
 ```xml
 <platform name="android">
+	<preference name="android-minSdkVersion" value="16" />
     <config-file target="AndroidManifest.xml" parent="application">
       	<meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
     </config-file>
@@ -101,7 +108,10 @@ To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/an
 To build for iOS, add the `publishableKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
 
 ```xml
-<preference name="publishableKey" value="INSERT-PUBLIC-KEY-HERE" />
+<platform name="ios">
+    ...
+    <preference name="publishableKey" value="INSERT-PUBLIC-KEY-HERE" />
+</platform>
 ```
 
 
@@ -135,7 +145,7 @@ To build for iOS, add the `publishableKey` preference tag to the `config.xml` fi
 ## 3. Usage
 
 ### Getting a Token
-It's a cinch to obtain a single-use token with the PaystackSdk using the PaystackPlugin. Like most Cordova/PhoneGap plugins, use the PaystackPlugin after the `deviceready` event is fired:
+It's a cinch to obtain a single-use token with the Paystack SDKs using the PaystackPlugin. Like most Cordova/PhoneGap plugins, use the PaystackPlugin after the `deviceready` event is fired:
 
 ```js
 window.PaystackPlugin.getToken(successCallbackfn, failureCallbackfn, cardNumber, expiryMonth, expiryYear, cvc);
@@ -150,11 +160,11 @@ function onDeviceReady() {
     window.PaystackPlugin.getToken(
       function(resp) {
         // A valid one-timme-use token is obtained, do your thang!
-        console.log('success: ', resp);
+        console.log('getting token successful: ', resp);
       },
       function(resp) {
         // Something went wrong, oops - perhaps an invalid card.
-        console.log('failure: ', resp);
+        console.log('getting token failed: ', resp);
       },
       '4123450131001381',
       '05',
@@ -163,16 +173,27 @@ function onDeviceReady() {
 }
 ```
 
+You must not forget to build your project again - each time you edit native code. Run `cordova build ios/android` or similar variants.
+
 Explaining the arguments to `window.PaystackPlugin.getToken`:
 
-+ {Function} successCallback - callback to be invoked on successfully acquiring a token.
- * A single object argument will be passed which has 2 keys: "token" is a string containing the returned token, while "last4" is a string containing the last 4 digits of the card the token belongs to.
-+ {Function} errorCallback - callback to be invoked on failure to acquire a valid token.
- * A single object argument will be passed which has 2 keys: "error" is a string containing a description of the error, "code" is an arbitrary error code.
-+ cardNumber: the card number as a String without any seperator e.g 5555555555554444
-+ expiryMonth: the expiry month as an integer ranging from 1-12 e.g 10 (October) (2 digits: very !important for iOS)
-+ expiryYear: the expiry year as an integer e.g 15 (2 digits: very !important for iOS)
-+ cvc: the card security code as a String e.g 123
+| Argument        | Type           | Description  |
+| ------------- |:-------------:| :-----|
+| cardNumber          | string | the card number as a String without any seperator e.g 5555555555554444 |
+| expiryMonth      | string      | the card expiry month as a double-digit ranging from 1-12 e.g 10 (October) |
+| expiryYear | string      | the card expiry year as a double-digit e.g 15 |
+| cvc | string | the card 3/4 digit security code as a String e.g 123 |
+
+#### Response Object
+
+An object of the form is returned from a successful token request
+
+```javascript
+{
+  token: "PSTK_4aw6i0yizwvyzjx",
+  last4: "1381"
+}
+```
 
 ### Charging the tokens. 
 Send the token to your server and create a charge by calling the Paystack REST API. An authorization_code will be returned once the single-use token has been charged successfully. You can learn more about the Paystack API [here](https://developers.paystack.co/docs/getting-started).
@@ -196,6 +217,60 @@ Send the token to your server and create a charge by calling the Paystack REST A
 
 ```
 
+### Charging a Card (Android Only)
+You can complete a transaction using the Paystack Android SDK. This method is, however, only available on the Android pltform at this time. Like most Cordova/PhoneGap plugins, use the PaystackPlugin after the `deviceready` event is fired:
+
+```js
+window.PaystackPlugin.chargeCard(successCallbackfn, failureCallbackfn, cardNumber, expiryMonth, expiryYear, cvc, email, amountInKobo);
+```
+To be more elaborate:
+
+```js
+document.addEventListener("deviceready", onDeviceReady, false);
+
+function onDeviceReady() {
+    // Now safe to use device APIs
+    window.PaystackPlugin.chargeCard(
+      function(resp) {
+        // charge successful, grab transaction reference - do your thang!
+        console.log('charge successful: ', resp);
+      },
+      function(resp) {
+        // Something went wrong, oops - perhaps an invalid card.
+        console.log('charge failed: ', resp);
+      },
+      '4123450131001381',
+      '05',
+      '16',
+      '883',
+      'dev@cordova.io',
+      10000);
+}
+```
+
+You must not forget to build your project again - each time you edit native code. Run `cordova build ios/android` or similar variants.
+
+#### Request Signature
+
+| Argument        | Type           | Description  |
+| ------------- |:-------------:| :-----|
+| cardNumber          | string | the card number as a String without any seperator e.g 5555555555554444 |
+| expiryMonth      | string      | the card expiry month as a double-digit ranging from 1-12 e.g 10 (October) |
+| expiryYear | string      | the card expiry year as a double-digit e.g 15 |
+| cvc | string | the card 3/4 digit security code as e.g 123 |
+| email | string | email of the user to be charged |
+| amountInKobo | integer | the transaction amount in kobo |
+
+#### Response Object
+
+An object of the form is returned from a successful charge
+
+```javascript
+{
+  reference: "trx_1k2o600w"
+}
+```
+
 
 ## 4. CREDITS
 
@@ -206,7 +281,8 @@ Perhaps needless to say, this plugin leverages the [Paystack Android SDK](https:
 
 - 1.0.1: Initial version supporting Android.
 - 1.0.3: Code clean up and addition of arbitrary error codes.
-- 1.1.0: Added iOS support and bumped up paystack android library to v1.2 - making 16 the min sdk you should target.
+- 1.1.0: Added iOS support and bumped up Paystack Android library to v1.2, making 16 the min sdk you should target.
+- 2.0.0: No breaking changes at this time. Added `android-minSdkVersion=16` condition to Android builds. Added `chargeCard` method to Android APIs. Upgrade to v2.* of the Paystack Android SDK.
 
 ## 6. License
 

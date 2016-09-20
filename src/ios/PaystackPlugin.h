@@ -20,5 +20,6 @@
 - (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(int)errorCode;
 - (NSMutableDictionary*)setTokenMsg:(NSString *)token withCardLastDigits:(NSString *)last4;
 - (void)getToken:(CDVInvokedUrlCommand*)command;
+- (void)chargeCard:(CDVInvokedUrlCommand*)command;
 
 @end

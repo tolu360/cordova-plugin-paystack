@@ -7,6 +7,7 @@ import org.apache.cordova.CordovaInterface;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.util.Patterns;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,11 +18,15 @@ import co.paystack.android.Paystack;
 import co.paystack.android.PaystackSdk;
 import co.paystack.android.model.Card;
 import co.paystack.android.model.Token;
+import co.paystack.android.model.Charge;
+import co.paystack.android.model.Transaction;
 
 public class PaystackPlugin extends CordovaPlugin {
 
 	protected Token token;
 	protected Card card;
+	private Charge charge;
+    private Transaction transaction;
 
 	public static final String TAG = "PaystackPlugin";
 
@@ -53,6 +58,10 @@ public class PaystackPlugin extends CordovaPlugin {
                 context = callbackContext;
                 getToken(args);
                 result = true;
+            } else if (action.equals("chargeCard")) {
+            	context = callbackContext;
+                chargeCard(args);
+                result = true;
             } else {
                 handleError("Invalid action", 404);
                 result = false;
@@ -76,7 +85,7 @@ public class PaystackPlugin extends CordovaPlugin {
         }
     }
 
-    protected void handleSuccess(String token, String lastDigits){
+    protected void handleTokenSuccess(String token, String lastDigits) {
         try {
             Log.i(TAG, token);
             JSONObject success = new JSONObject();
@@ -88,13 +97,37 @@ public class PaystackPlugin extends CordovaPlugin {
         }
     }
 
+    protected void handleChargeSuccess(String reference) {
+        try {
+            Log.i(TAG, reference);
+            JSONObject success = new JSONObject();
+            success.put("reference", reference);
+            context.success(success);
+        } catch (JSONException e) {
+            handleError(e.getMessage(), 401);
+        }
+    }
+
     private void getToken(JSONArray args) throws JSONException {
     	
 		//check card validity
         validateCard(args);
 		
-		if (card.isValid()) {
-			createToken(card);
+		if (card != null && card.isValid()) {
+			createToken();
+		}
+    }
+
+    private void chargeCard(JSONArray args) throws JSONException {
+    	
+		validateTransaction(args);
+		
+		if (card != null && card.isValid()) {
+			try {
+				createTransaction();
+			} catch(Exception error) {
+    			handleError(error.getMessage(), 427);
+    		}			
 		}
     }
 
@@ -158,22 +191,86 @@ public class PaystackPlugin extends CordovaPlugin {
 		}
     }
 
-	private void createToken(Card card) {
+    protected void validateTransaction(JSONArray args) throws JSONException {
+    	
+    	validateCard(args);
+
+    	charge = new Charge();
+        charge.setCard(card);
+
+        String email = args.getString(4).trim();
+        if (isEmpty(email)) {
+        	handleError("Email cannot be empty.", 428);
+            return;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        	handleError("Invalid email.", 429);
+            return;
+        }
+
+        charge.setEmail(email);
+
+        Integer amountInKobo = args.getInt(5);
+        if (amountInKobo < 1) {
+        	handleError("Invalid amount", 430);
+            return;
+        }
+
+        charge.setAmount(amountInKobo);
+
+    }
+
+	private void createToken() {
 		//then create token using PaystackSdk class
 		PaystackSdk.createToken(card, new Paystack.TokenCallback() {
 			@Override
 			public void onCreate(Token token) {
 				//here you retrieve the token, and send to your server for charging.
-				handleSuccess(token.token, token.last4);
-			
+				handleTokenSuccess(token.token, token.last4);			
 			}
 
 			@Override
-			public void onError(Exception error) {
+			public void onError(Throwable error) {
 				handleError(error.getMessage(), 427);
 			}
 		});
 	}
+
+	private void createTransaction() {
+        
+        transaction = null;
+
+        PaystackSdk.chargeCard(this.cordova.getActivity(), charge, new Paystack.TransactionCallback() {
+            @Override
+            public void onSuccess(Transaction transaction) {
+                
+                // This is called only after transaction is successful
+                PaystackPlugin.this.transaction = transaction;
+
+                handleChargeSuccess(transaction.reference);
+            }
+
+            @Override
+            public void beforeValidate(Transaction transaction) {
+                // This is called only before requesting OTP
+                // Save reference so you may send to server if
+                // error occurs with OTP
+                PaystackPlugin.this.transaction = transaction;
+            }
+
+            @Override
+            public void onError(Throwable error) {
+               
+                if (PaystackPlugin.this.transaction == null) {
+                	handleError(error.getMessage(), 427);
+                } else {
+                	handleError(transaction.reference + " concluded with error: " + error.getMessage(), 427);
+                }
+            }
+
+        });
+    }
 
 	private boolean isEmpty(String s) {
 		return s == null || s.length() < 1;
