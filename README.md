@@ -145,6 +145,10 @@ To build for iOS, add the `publishableKey` preference tag to the `config.xml` fi
 ## 3. Usage
 
 ### Getting a Token
+- Note: If you are working with XCode 8+, to allow encryptions work properly with the Paystack SDK, you may need to enable `Keychain Sharing` for your app. In the Capabilities pane, if Keychain Sharing isn’t enabled, toggle ON the switch in the Keychain Sharing section.
+
+<img width=400 title="XCode files tree" src="./4_enablekeychain_2x.png">
+
 It's a cinch to obtain a single-use token with the Paystack SDKs using the PaystackPlugin. Like most Cordova/PhoneGap plugins, use the PaystackPlugin after the `deviceready` event is fired:
 
 ```js
