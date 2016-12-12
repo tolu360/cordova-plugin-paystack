@@ -4,7 +4,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-paystack"
-    version="2.0.0">
+    version="2.1.1">
     <name>PaystackPlugin</name>
     <description>This plugin allows to add Paystack Payments to your application using Paystack Mobile SDKs</description>
     <keywords>paystack, sdk, payments</keywords>
