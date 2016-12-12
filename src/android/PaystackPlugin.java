@@ -132,15 +132,21 @@ public class PaystackPlugin extends CordovaPlugin {
     }
 
     protected void validateCard(JSONArray args) throws JSONException {
-		String cardNum = args.getString(0).trim();
+        
+        JSONObject cardParams = args.getJSONObject(0);
 
-		if (isEmpty(cardNum)) {
+        String cardNumber = cardParams.optString("cardNumber");
+        int expiryMonth = cardParams.optInt("expiryMonth");
+        int expiryYear = cardParams.optInt("expiryYear");
+        String cvc = cardParams.optString("cvc");
+
+		if (isEmpty(cardNumber)) {
 			handleError("Empty card number.", 420);
 			return;
 		}
 
 		//build card object with ONLY the number, update the other fields later
-		card = new Card.Builder(cardNum, 0, 0, "").build();
+		card = new Card.Builder(cardNumber, 0, 0, "").build();
 
 		if (!card.validNumber()) {
 			handleError("Invalid card number.", 421);
@@ -148,7 +154,6 @@ public class PaystackPlugin extends CordovaPlugin {
 		}
 
 		//validate cvc
-		String cvc = args.getString(3).trim();
 		if (isEmpty(cvc)) {
 			handleError("Empty cvc code.", 422);
 			return;
@@ -164,9 +169,7 @@ public class PaystackPlugin extends CordovaPlugin {
 		}
 
 		//validate expiry month;
-		Integer expiryMonth = args.getInt(1);
-		
-		if (expiryMonth < 1) {
+        if (expiryMonth < 1) {
 			handleError("Invalid expiration month.", 424);
 			return;
 		}
@@ -175,9 +178,7 @@ public class PaystackPlugin extends CordovaPlugin {
 		card.setExpiryMonth(expiryMonth);
 
 		//validate expiry year;
-		Integer expiryYear = args.getInt(2);
-		
-		if (expiryYear < 1) {
+        if (expiryYear < 1) {
 			handleError("Invalid expiration year.", 425);
 			return;
 		}
@@ -192,13 +193,23 @@ public class PaystackPlugin extends CordovaPlugin {
     }
 
     protected void validateTransaction(JSONArray args) throws JSONException {
+
+        JSONObject chargeParams = args.getJSONObject(0);
+
+        String email = chargeParams.optString("email");
+        int amountInKobo = chargeParams.optInt("amountInKobo");
+        String currency = chargeParams.optString("currency");
+        String plan = chargeParams.optString("plan");
+        int transactionCharge = chargeParams.optInt("transactionCharge");
+        String subAccount = chargeParams.optString("subAccount");
+        String reference = chargeParams.optString("reference");
+        String bearer = chargeParams.optString("bearer");
     	
     	validateCard(args);
 
     	charge = new Charge();
         charge.setCard(card);
 
-        String email = args.getString(4).trim();
         if (isEmpty(email)) {
         	handleError("Email cannot be empty.", 428);
             return;
@@ -211,13 +222,40 @@ public class PaystackPlugin extends CordovaPlugin {
 
         charge.setEmail(email);
 
-        Integer amountInKobo = args.getInt(5);
         if (amountInKobo < 1) {
         	handleError("Invalid amount", 430);
             return;
         }
 
         charge.setAmount(amountInKobo);
+
+        if (currency != null && !currency.isEmpty()) {
+            charge.setCurrency(currency);
+        }
+
+        if (plan != null && !plan.isEmpty()) {
+            charge.setPlan(plan);
+        }
+
+        if (subAccount != null && !subAccount.isEmpty()) {
+            charge.setSubaccount(subAccount);
+
+            if (bearer != null && !bearer.isEmpty() && bearer == "subaccount") {
+                charge.setBearer(Charge.Bearer.subaccount);
+            }
+
+            if (bearer != null && !bearer.isEmpty() && bearer == "account") {
+                charge.setBearer(Charge.Bearer.account);
+            }
+
+            if (transactionCharge > 0) {
+                charge.setTransactionCharge(transactionCharge);
+            }
+        }
+
+        if (reference != null && !reference.isEmpty()) {
+            charge.setReference(reference);
+        }
 
     }
 

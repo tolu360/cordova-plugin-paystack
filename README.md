@@ -39,7 +39,14 @@ $ cordova plugin add https://github.com/tolu360/Cordova-Plugin-Paystack
 
 ### << --- Fixing Build Errors [iOS]
 
-****Installing this plugin directly from Cordova Registry results in Xcode using a broken `Paystack.framework`, this may be because the current publish procedure to NPM breaks symlinks [CB-6092](https://issues.apache.org/jira/browse/CB-6092). Please install the plugin with `$ cordova plugin add https://github.com/tolu360/Cordova-Plugin-Paystack` OR through a locally cloned copy OR replace the `Paystack.framework` file found at `~PROJECT_FOLDER/platforms/ios/PROJECT_ID/Plugins/cordova-plugin-paystack` with the clean copy you should [download and extract](https://www.dropbox.com/s/ykt5h0xjjkfwmk6/Paystack.framework.zip?dl=0) from https://www.dropbox.com/s/ykt5h0xjjkfwmk6/Paystack.framework.zip?dl=0 after installation.****
+****Installing this plugin directly from Cordova Registry results in Xcode using a broken `Paystack.framework`, this may be because the current publish procedure to NPM breaks symlinks [CB-6092](https://issues.apache.org/jira/browse/CB-6092). Please install the plugin with `$ cordova plugin add https://github.com/tolu360/Cordova-Plugin-Paystack` OR through a locally cloned copy OR replace the `Paystack.framework` file found at `~PROJECT_FOLDER/platforms/ios/PROJECT_ID/Plugins/cordova-plugin-paystack` with the clean copy you should [download and extract](https://www.dropbox.com/s/rxds20w3ud4wqs2/PaystackiOS%20%283%29.zip?dl=0) from https://www.dropbox.com/s/rxds20w3ud4wqs2/PaystackiOS%20%283%29.zip?dl=0 or from their [releases page on Github](https://github.com/PaystackHQ/paystack-ios/releases/) after installation.****
+
+****For Android Builds, have the following on your local build environment:
+Android SDK Tools: 25+
+Android SDK Platform-tools: 25+
+Android SDK Build-tools: 25+
+SDK Platform: 25+
+Android Support Repository: 39+
 
 ### ------------------------------------------ >>
 
@@ -144,7 +151,7 @@ To build for iOS, add the `publishableKey` preference tag to the `config.xml` fi
 
 ## 3. Usage
 
-### Getting a Token
+### Getting a Token (iOS & Android)
 - Note: If you are working with XCode 8+, to allow encryptions work properly with the Paystack SDK, you may need to enable `Keychain Sharing` for your app. In the Capabilities pane, if Keychain Sharing isn’t enabled, toggle ON the switch in the Keychain Sharing section.
 
 <img width=400 title="XCode files tree" src="./4_enablekeychain_2x.png">
@@ -152,9 +159,9 @@ To build for iOS, add the `publishableKey` preference tag to the `config.xml` fi
 It's a cinch to obtain a single-use token with the Paystack SDKs using the PaystackPlugin. Like most Cordova/PhoneGap plugins, use the PaystackPlugin after the `deviceready` event is fired:
 
 ```js
-window.PaystackPlugin.getToken(successCallbackfn, failureCallbackfn, cardNumber, expiryMonth, expiryYear, cvc);
+window.PaystackPlugin.getToken(successCallbackfn, failureCallbackfn, cardParams);
 ```
-To be more elaborate:
+To be more elaborate, `cardParams` is a Javascript `Object` representing the card to be tokenized.
 
 ```js
 document.addEventListener("deviceready", onDeviceReady, false);
@@ -170,10 +177,12 @@ function onDeviceReady() {
         // Something went wrong, oops - perhaps an invalid card.
         console.log('getting token failed: ', resp);
       },
-      '4123450131001381',
-      '05',
-      '16',
-      '883');
+      {
+        cardNumber: '4123450131001381', 
+        expiryMonth: '10', 
+        expiryYear: '17', 
+        cvc: '883'
+    });
 }
 ```
 
@@ -221,13 +230,13 @@ Send the token to your server and create a charge by calling the Paystack REST A
 
 ```
 
-### Charging a Card (Android Only)
-You can complete a transaction using the Paystack Android SDK. This method is, however, only available on the Android pltform at this time. Like most Cordova/PhoneGap plugins, use the PaystackPlugin after the `deviceready` event is fired:
+### Charging a Card (iOS & Android)
+You can complete a transaction using the Paystack Mobile SDKs. Like most Cordova/PhoneGap plugins, use the PaystackPlugin after the `deviceready` event is fired:
 
 ```js
-window.PaystackPlugin.chargeCard(successCallbackfn, failureCallbackfn, cardNumber, expiryMonth, expiryYear, cvc, email, amountInKobo);
+window.PaystackPlugin.chargeCard(successCallbackfn, failureCallbackfn, chargeParams);
 ```
-To be more elaborate:
+To be more elaborate, `chargeParams` is a Javascript `Object` representing the parameters of the charge to be initiated.
 
 ```js
 document.addEventListener("deviceready", onDeviceReady, false);
@@ -243,16 +252,19 @@ function onDeviceReady() {
         // Something went wrong, oops - perhaps an invalid card.
         console.log('charge failed: ', resp);
       },
-      '4123450131001381',
-      '05',
-      '16',
-      '883',
-      'dev@cordova.io',
-      10000);
+      {
+        cardNumber: '4123450131001381', 
+        expiryMonth: '10', 
+        expiryYear: '17', 
+        cvc: '883',
+        email: 'chargeIOS@master.dev',
+        amountInKobo: 150000,
+        subAccount: 'ACCT_pz61jjjsslnx1d9',
+    });
 }
 ```
 
-You must not forget to build your project again - each time you edit native code. Run `cordova build ios/android` or similar variants.
+You must not forget to build your project again - each time you edit native code. Run `cordova build ios/android` or similar variants to refresh your cached html/js views.
 
 #### Request Signature
 
@@ -264,6 +276,12 @@ You must not forget to build your project again - each time you edit native code
 | cvc | string | the card 3/4 digit security code as e.g 123 |
 | email | string | email of the user to be charged |
 | amountInKobo | integer | the transaction amount in kobo |
+| currency (optional) | string | sets the currency for the transaction e.g. USD |
+| plan (optional) | string | sets the plan ID if the transaction is to create a subscription e.g. PLN_n0p196bg73y4jcx |
+| subAccount (optional) | string | sets the subaccount ID for split-payment transactions e.g. ACCT_pz61jjjsslnx1d9 |
+| transactionCharge (optional) | integer | the amount to be charged on a split-payment, use only when `subAccount` is set |
+| bearer (optional) | string | sets which party bears paystack fees on a split-payment e.g. 'subaccount', use only when `subAccount` is set |
+| reference (optional) | string | sets the transaction reference which must be unique per transaction |
 
 #### Response Object
 
@@ -274,6 +292,22 @@ An object of the form is returned from a successful charge
   reference: "trx_1k2o600w"
 }
 ```
+
+### Verifying a Charge
+Verify a charge by calling Paystack's [REST API](https://api.paystack.co/transaction/verify) with the `reference` obtained above. An `authorization_code` will be returned once the card has been charged successfully. Learn more about that [here](https://developers.paystack.co/docs/verify-transaction).
+
+ **Parameter:** 
+
+ - reference  - the transaction reference (required)
+
+ **Example**
+
+ ```bash
+ $ curl https://api.paystack.co/transaction/verify/trx_1k2o600w \
+    -H "Authorization: Bearer SECRET_KEY" \
+    -H "Content-Type: application/json" \
+    -X GET
+ ```
 
 
 ## 4. CREDITS
@@ -287,6 +321,11 @@ Perhaps needless to say, this plugin leverages the [Paystack Android SDK](https:
 - 1.0.3: Code clean up and addition of arbitrary error codes.
 - 1.1.0: Added iOS support and bumped up Paystack Android library to v1.2, making 16 the min sdk you should target.
 - 2.0.0: No breaking changes at this time. Added `android-minSdkVersion=16` condition to Android builds. Added `chargeCard` method to Android APIs. Upgrade to v2.* of the Paystack Android SDK.
+- 2.1.0: Breaking Changes: Major changes to the public API.
+- 2.1.0: Upgraded to v2.1+ of both the Paystack iOS and Android SDKs.
+- 2.1.0: Added support for `chargeCard` on both platforms.
+- 2.1.0: Added support for `subscriptions` and `split-payments`.
+- 2.1.0: For v2-specific usage, see [v2 Docs](./v2-Docs.md)
 
 ## 6. License
 

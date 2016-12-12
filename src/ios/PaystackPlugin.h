@@ -19,6 +19,7 @@
 - (BOOL)cardParamsAreValid:(NSString *)cardNumber withMonth:(NSString *)expMonth withYear:(NSString *)expYear andWithCvc:(NSString *)cvc;
 - (NSMutableDictionary*)setErrorMsg:(NSString *)errorMsg withErrorCode:(int)errorCode;
 - (NSMutableDictionary*)setTokenMsg:(NSString *)token withCardLastDigits:(NSString *)last4;
+- (NSMutableDictionary*)setReferenceMsg:(NSString *)reference;
 - (void)getToken:(CDVInvokedUrlCommand*)command;
 - (void)chargeCard:(CDVInvokedUrlCommand*)command;
 
