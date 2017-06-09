@@ -42,11 +42,11 @@ $ cordova plugin add https://github.com/tolu360/cordova-plugin-paystack
 ****Installing this plugin directly from Cordova Registry results in Xcode using a broken `Paystack.framework`, this may be because the current publish procedure to NPM breaks symlinks [CB-6092](https://issues.apache.org/jira/browse/CB-6092). Please install the plugin with `$ cordova plugin add https://github.com/tolu360/cordova-plugin-paystack` OR through a locally cloned copy OR replace the `Paystack.framework` file found at `~PROJECT_FOLDER/platforms/ios/PROJECT_ID/Plugins/cordova-plugin-paystack` with the clean copy you should download and extract from their [releases page on Github](https://github.com/PaystackHQ/paystack-ios/releases/) after installation.****
 
 ****For Android Builds, have the following on your local build environment:
-Android SDK Tools: 25+
-Android SDK Platform-tools: 25+
-Android SDK Build-tools: 25+
-SDK Platform: 25+
-Android Support Repository: 39+
+- Android SDK Tools: 25+
+- Android SDK Platform-tools: 25+
+- Android SDK Build-tools: 25+
+- SDK Platform: 25+
+- Android Support Repository: 39+
 
 ### ------------------------------------------ >>
 
