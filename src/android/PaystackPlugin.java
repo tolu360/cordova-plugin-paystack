@@ -17,9 +17,8 @@ import android.net.Uri;
 import co.paystack.android.Paystack;
 import co.paystack.android.PaystackSdk;
 import co.paystack.android.model.Card;
-import co.paystack.android.model.Token;
 import co.paystack.android.model.Charge;
-import co.paystack.android.model.Transaction;
+import co.paystack.android.Transaction;
 
 public class PaystackPlugin extends CordovaPlugin {
 
@@ -54,9 +53,9 @@ public class PaystackPlugin extends CordovaPlugin {
                            CallbackContext callbackContext) throws JSONException {
         boolean result;
         try {
-            if(action.equals("getToken")) {
+            if(action.equals("chargeCardWithAccessCode")) {
                 context = callbackContext;
-                getToken(args);
+                chargeCardWithAccessCode(args);
                 result = true;
             } else if (action.equals("chargeCard")) {
             	context = callbackContext;
@@ -73,7 +72,7 @@ public class PaystackPlugin extends CordovaPlugin {
         return result;
     }
 
-    protected void handleError(String errorMsg, int errorCode){
+    protected void handleError(String errorMsg, int errorCode) {
         try {
             Log.e(TAG, errorMsg);
             JSONObject error = new JSONObject();
@@ -82,18 +81,6 @@ public class PaystackPlugin extends CordovaPlugin {
             context.error(error);
         } catch (JSONException e) {
             Log.e(TAG, e.toString());
-        }
-    }
-
-    protected void handleTokenSuccess(String token, String lastDigits) {
-        try {
-            Log.i(TAG, token);
-            JSONObject success = new JSONObject();
-            success.put("token", token);
-            success.put("last4", lastDigits);
-            context.success(success);
-        } catch (JSONException e) {
-            handleError(e.getMessage(), 401);
         }
     }
 
@@ -108,19 +95,22 @@ public class PaystackPlugin extends CordovaPlugin {
         }
     }
 
-    private void getToken(JSONArray args) throws JSONException {
+    private void chargeCard(JSONArray args) throws JSONException {
     	
-		//check card validity
-        validateCard(args);
+		validateFullTransaction(args);
 		
 		if (card != null && card.isValid()) {
-			createToken();
+			try {
+				createTransaction();
+			} catch(Exception error) {
+    			handleError(error.getMessage(), 427);
+    		}			
 		}
     }
 
-    private void chargeCard(JSONArray args) throws JSONException {
+    private void chargeCardWithAccessCode(JSONArray args) throws JSONException {
     	
-		validateTransaction(args);
+		validateAccessCodeTransaction(args);
 		
 		if (card != null && card.isValid()) {
 			try {
@@ -192,7 +182,20 @@ public class PaystackPlugin extends CordovaPlugin {
 		}
     }
 
-    protected void validateTransaction(JSONArray args) throws JSONException {
+    protected void validateAccessCodeTransaction(JSONArray args) throws JSONException {
+        JSONObject chargeParams = args.getJSONObject(0);
+
+        String accessCode = chargeParams.optString("accessCode");
+
+        validateCard(args);
+
+    	charge = new Charge();
+        charge.setCard(card);
+        charge.setAccessCode(accessCode);
+
+    }
+
+    protected void validateFullTransaction(JSONArray args) throws JSONException {
 
         JSONObject chargeParams = args.getJSONObject(0);
 
@@ -259,22 +262,6 @@ public class PaystackPlugin extends CordovaPlugin {
 
     }
 
-	private void createToken() {
-		//then create token using PaystackSdk class
-		PaystackSdk.createToken(card, new Paystack.TokenCallback() {
-			@Override
-			public void onCreate(Token token) {
-				//here you retrieve the token, and send to your server for charging.
-				handleTokenSuccess(token.token, token.last4);			
-			}
-
-			@Override
-			public void onError(Throwable error) {
-				handleError(error.getMessage(), 427);
-			}
-		});
-	}
-
 	private void createTransaction() {
         
         transaction = null;
@@ -286,7 +273,7 @@ public class PaystackPlugin extends CordovaPlugin {
                 // This is called only after transaction is successful
                 PaystackPlugin.this.transaction = transaction;
 
-                handleChargeSuccess(transaction.reference);
+                handleChargeSuccess(transaction.getReference());
             }
 
             @Override
@@ -298,12 +285,12 @@ public class PaystackPlugin extends CordovaPlugin {
             }
 
             @Override
-            public void onError(Throwable error) {
+            public void onError(Throwable error, Transaction transaction) {
                
                 if (PaystackPlugin.this.transaction == null) {
                 	handleError(error.getMessage(), 427);
                 } else {
-                	handleError(transaction.reference + " concluded with error: " + error.getMessage(), 427);
+                	handleError(transaction.getReference() + " concluded with error: " + error.getMessage(), 427);
                 }
             }
 
