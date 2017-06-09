@@ -33,13 +33,13 @@ $ cordova plugin add cordova-plugin-paystack
 
 Or directly from the repo (most especially if you run into any issues building for IOS with the command above)
 ```
-$ cordova plugin add https://github.com/tolu360/Cordova-Plugin-Paystack
+$ cordova plugin add https://github.com/tolu360/cordova-plugin-paystack
 ```
 
 
 ### << --- Fixing Build Errors [iOS]
 
-****Installing this plugin directly from Cordova Registry results in Xcode using a broken `Paystack.framework`, this may be because the current publish procedure to NPM breaks symlinks [CB-6092](https://issues.apache.org/jira/browse/CB-6092). Please install the plugin with `$ cordova plugin add https://github.com/tolu360/Cordova-Plugin-Paystack` OR through a locally cloned copy OR replace the `Paystack.framework` file found at `~PROJECT_FOLDER/platforms/ios/PROJECT_ID/Plugins/cordova-plugin-paystack` with the clean copy you should [download and extract](https://www.dropbox.com/s/rxds20w3ud4wqs2/PaystackiOS%20%283%29.zip?dl=0) from https://www.dropbox.com/s/rxds20w3ud4wqs2/PaystackiOS%20%283%29.zip?dl=0 or from their [releases page on Github](https://github.com/PaystackHQ/paystack-ios/releases/) after installation.****
+****Installing this plugin directly from Cordova Registry results in Xcode using a broken `Paystack.framework`, this may be because the current publish procedure to NPM breaks symlinks [CB-6092](https://issues.apache.org/jira/browse/CB-6092). Please install the plugin with `$ cordova plugin add https://github.com/tolu360/cordova-plugin-paystack` OR through a locally cloned copy OR replace the `Paystack.framework` file found at `~PROJECT_FOLDER/platforms/ios/PROJECT_ID/Plugins/cordova-plugin-paystack` with the clean copy you should download and extract from their [releases page on Github](https://github.com/PaystackHQ/paystack-ios/releases/) after installation.****
 
 ****For Android Builds, have the following on your local build environment:
 Android SDK Tools: 25+
@@ -64,17 +64,17 @@ To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/an
     ...
     <preference name="android-minSdkVersion" value="16" />
     <config-file target="AndroidManifest.xml" parent="application">
-      	<meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
+      	<meta-data android:name="co.paystack.android.PublicKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
     </config-file>
 </platform>
 ```
 
-To build for iOS, add the `publishableKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
+To build for iOS, add the `publicKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
 
 ```xml
 <platform name="ios">
     ...
-    <preference name="publishableKey" value="INSERT-PUBLIC-KEY-HERE" />
+    <preference name="publicKey" value="INSERT-PUBLIC-KEY-HERE" />
 </platform>
 ```
 You must not forget to build your project again - each time you edit native code. Run `cordova build ios/android` or similar variants.
@@ -107,17 +107,17 @@ To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/an
 <platform name="android">
 	<preference name="android-minSdkVersion" value="16" />
     <config-file target="AndroidManifest.xml" parent="application">
-      	<meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
+      	<meta-data android:name="co.paystack.android.PublicKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
     </config-file>
 </platform>
 ```
 
-To build for iOS, add the `publishableKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
+To build for iOS, add the `publicKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
 
 ```xml
 <platform name="ios">
     ...
-    <preference name="publishableKey" value="INSERT-PUBLIC-KEY-HERE" />
+    <preference name="publicKey" value="INSERT-PUBLIC-KEY-HERE" />
 </platform>
 ```
 
@@ -138,28 +138,28 @@ To build for Android, add ` xmlns:android="http://schemas.android.com/apk/res/an
 ```xml
 <platform name="android">
     <config-file target="AndroidManifest.xml" parent="application">
-      	<meta-data android:name="co.paystack.android.PublishableKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
+      	<meta-data android:name="co.paystack.android.PublicKey" android:value="INSERT-PUBLIC-KEY-HERE"/>
     </config-file>
 </platform>
 ```
 
-To build for iOS, add the `publishableKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
+To build for iOS, add the `publicKey` preference tag to the `config.xml` file in the root of your project (very bad things can happen without it):
 
 ```xml
-<preference name="publishableKey" value="INSERT-PUBLIC-KEY-HERE" />
+<preference name="publicKey" value="INSERT-PUBLIC-KEY-HERE" />
 ```
 
 ## 3. Usage
 
-### Getting a Token (iOS & Android)
+### Charging a Card with Access Code (iOS & Android)
 - Note: If you are working with XCode 8+, to allow encryptions work properly with the Paystack SDK, you may need to enable `Keychain Sharing` for your app. In the Capabilities pane, if Keychain Sharing isn’t enabled, toggle ON the switch in the Keychain Sharing section.
 
 <img width=400 title="XCode files tree" src="./4_enablekeychain_2x.png">
 
-It's a cinch to obtain a single-use token with the Paystack SDKs using the PaystackPlugin. Like most Cordova/PhoneGap plugins, use the PaystackPlugin after the `deviceready` event is fired:
+It's a cinch to charge a card with the Paystack SDKs using the PaystackPlugin. This is the recommended or the most-preferred workflow favored by the folks at Paystack. Initiate a new transaction on your server side using the appropriate [Paystack endpoint](https://developers.paystack.co/reference#initialize-a-transaction) - obtain an `access_code` and complete the charge on your mobile application. Like most Cordova/PhoneGap plugins, use the PaystackPlugin after the `deviceready` event is fired:
 
 ```js
-window.PaystackPlugin.getToken(successCallbackfn, failureCallbackfn, cardParams);
+window.PaystackPlugin.chargeCardWithAccessCode(successCallbackfn, failureCallbackfn, cardParams);
 ```
 To be more elaborate, `cardParams` is a Javascript `Object` representing the card to be tokenized.
 
@@ -168,27 +168,28 @@ document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
     // Now safe to use device APIs
-    window.PaystackPlugin.getToken(
+    window.PaystackPlugin.chargeCardWithAccessCode(
       function(resp) {
         // A valid one-timme-use token is obtained, do your thang!
-        console.log('getting token successful: ', resp);
+        console.log('charge successful: ', resp);
       },
       function(resp) {
         // Something went wrong, oops - perhaps an invalid card.
-        console.log('getting token failed: ', resp);
+        console.log('charge failed: ', resp);
       },
       {
         cardNumber: '4123450131001381', 
         expiryMonth: '10', 
         expiryYear: '17', 
-        cvc: '883'
+        cvc: '883',
+        accessCode: '2p3j42th639duy4'
     });
 }
 ```
 
 You must not forget to build your project again - each time you edit native code. Run `cordova build ios/android` or similar variants.
 
-Explaining the arguments to `window.PaystackPlugin.getToken`:
+Explaining the arguments to `window.PaystackPlugin.chargeCardWithAccessCode`:
 
 | Argument        | Type           | Description  |
 | ------------- |:-------------:| :-----|
@@ -196,6 +197,7 @@ Explaining the arguments to `window.PaystackPlugin.getToken`:
 | expiryMonth      | string      | the card expiry month as a double-digit ranging from 1-12 e.g 10 (October) |
 | expiryYear | string      | the card expiry year as a double-digit e.g 15 |
 | cvc | string | the card 3/4 digit security code as a String e.g 123 |
+| accessCode | string | the access_code obtained for the charge |
 
 #### Response Object
 
@@ -203,35 +205,12 @@ An object of the form is returned from a successful token request
 
 ```javascript
 {
-  token: "PSTK_4aw6i0yizwvyzjx",
-  last4: "1381"
+  reference: "trx_1k2o600w"
 }
 ```
 
-### Charging the tokens. 
-Send the token to your server and create a charge by calling the Paystack REST API. An authorization_code will be returned once the single-use token has been charged successfully. You can learn more about the Paystack API [here](https://developers.paystack.co/docs/getting-started).
- 
- **Endpoint:** https://api.paystack.co/transaction/charge_token
-
- **Parameters:** 
-
- - email  - customer's email address (required)
- - reference - unique reference  (required)
- - amount - Amount in Kobo (required) 
-
-**Example**
-
-```bash
-    curl https://api.paystack.co/transaction/charge_token \
-    -H "Authorization: Bearer SECRET_KEY" \
-    -H "Content-Type: application/json" \
-    -d '{"token": "PSTK_r4ec2m75mrgsd8n9", "email": "customer@email.com", "amount": 10000, "reference": "amutaJHSYGWakinlade256"}' \
-    -X POST
-
-```
-
 ### Charging a Card (iOS & Android)
-You can complete a transaction using the Paystack Mobile SDKs. Like most Cordova/PhoneGap plugins, use the PaystackPlugin after the `deviceready` event is fired:
+You can start and complete a transaction using just the Paystack Mobile SDKs. With this option, you pass both your charge and card properties to the SDK - with this worklow, you initiate and complete a transaction on your mobile app. Like most Cordova/PhoneGap plugins, use the PaystackPlugin after the `deviceready` event is fired:
 
 ```js
 window.PaystackPlugin.chargeCard(successCallbackfn, failureCallbackfn, chargeParams);
@@ -325,7 +304,10 @@ Perhaps needless to say, this plugin leverages the [Paystack Android SDK](https:
 - 2.1.0: Upgraded to v2.1+ of both the Paystack iOS and Android SDKs.
 - 2.1.0: Added support for `chargeCard` on both platforms.
 - 2.1.0: Added support for `subscriptions` and `split-payments`.
-- 2.1.0: For v2-specific usage, see [v2 Docs](./v2-Docs.md)
+- 2.1.0: For v2-specific usage, see [v2 Docs](./v2-Docs.md).
+- 3.1.0: Retired support for `getToken` on both platforms.
+- 3.1.0: Added support for `chargeCardWithAccessCode` on both platforms.
+- 3.1.0: Upgraded to v3.*+ of both the Paystack iOS and Android SDKs.
 
 ## 6. License
 
