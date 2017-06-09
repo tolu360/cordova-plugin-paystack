@@ -19,10 +19,10 @@
 {
     NSLog(@"- PaystackPlugin pageDidLoad");
 
-    NSString* paystackPublishableKey = [self.commandDelegate.settings objectForKey:[@"publishableKey" lowercaseString]];
-    [Paystack setDefaultPublishableKey:paystackPublishableKey];
+    NSString* paystackPublicKey = [self.commandDelegate.settings objectForKey:[@"publicKey" lowercaseString]];
+    [Paystack setDefaultPublicKey:paystackPublicKey];
 
-    NSLog(@"publishableKey: %@", [self.commandDelegate.settings objectForKey:[@"publishableKey" lowercaseString]]);
+    NSLog(@"publicKey: %@", [self.commandDelegate.settings objectForKey:[@"publicKey" lowercaseString]]);
 }
 
 - (BOOL)isCardNumberValid:(NSString *)cardNumber validateCardBrand:(BOOL)validateCardBrand
@@ -66,17 +66,6 @@
     return returnInfo;
 }
 
-- (NSMutableDictionary*)setTokenMsg:(NSString *)token withCardLastDigits:(NSString *)last4
-{
-    NSMutableDictionary *returnInfo;
-    returnInfo = [NSMutableDictionary dictionaryWithCapacity:2];
-
-    [returnInfo setObject:token forKey:@"token"];
-    [returnInfo setObject:last4 forKey:@"last4"];
-
-    return returnInfo;
-}
-
 - (NSMutableDictionary*)setReferenceMsg:(NSString *)reference
 {
     NSMutableDictionary *returnInfo;
@@ -115,74 +104,6 @@
 
     return YES;
 
-}
-
-- (void)getToken:(CDVInvokedUrlCommand*)command
-{
-    NSLog(@"- PaystackPlugin getToken");
-
-    NSLog(@"dict %@", [command.arguments objectAtIndex:0]);
-    
-    // Check command.arguments here.
-    NSDictionary* params = [command.arguments objectAtIndex:0];
-
-    [self.commandDelegate runInBackground:^{
-        // Build a resultset for javascript callback.
-        __block CDVPluginResult* pluginResult = nil;
-
-        if (! [self cardParamsAreValid:params[@"cardNumber"] withMonth:params[@"expiryMonth"] withYear:params[@"expiryYear"] andWithCvc:params[@"cvc"]]) {
-
-            NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
-
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
-
-        } else {
-            PSTCKCardParams *cardParams = [[PSTCKCardParams alloc] init];
-            cardParams.number = params[@"cardNumber"];
-            cardParams.expMonth = [params[@"expiryMonth"] integerValue];
-            cardParams.expYear = [params[@"expiryYear"] integerValue];
-            cardParams.cvc = params[@"cvc"];
-
-            if ([self isCardValid:cardParams]) {
-                [[PSTCKAPIClient sharedClient] createTokenWithCard:cardParams completion:^(PSTCKToken *token, NSError *error) {
-                    if (token) {
-                        NSLog(@"- PaystackPlugin Token is set");
-                        
-                        NSMutableDictionary *returnInfo = [self setTokenMsg:token.tokenId withCardLastDigits:token.last4];
-                        NSLog(@"token is set: %@", token.tokenId);
-                        NSLog(@"token result: %@", returnInfo);
-
-                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
-                        NSLog(@"- PaystackPlugin pluginResult is set");
-                    }
-
-                    if (error) {
-                        NSLog(@"- PaystackPlugin TokenError is set");
-                        NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error retrieving token for card." withErrorCode:401];
-
-                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
-                    }
-
-                    if (pluginResult != nil) {
-                        NSLog(@"- PaystackPlugin sendPluginResult");
-                        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-                    }
-                }];
-            } else {
-                NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid Card." withErrorCode:404];
-
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
-            }
-
-        
-        }
-        // The sendPluginResult method is thread-safe.
-        if (pluginResult != nil) {
-            NSLog(@"- PaystackPlugin sendPluginResult");
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-       
-    }];
 }
 
 - (void)chargeCard:(CDVInvokedUrlCommand*)command
@@ -244,7 +165,85 @@
                 [[PSTCKAPIClient sharedClient] chargeCard:cardParams
                                forTransaction:transactionParams
                             onViewController:rootViewController
-                              didEndWithError:^(NSError *error){
+                              didEndWithError:^(NSError *error, NSString *reference){
+                                                NSLog(@"- PaystackPlugin ChargeError is set");
+                                                NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error charging card." withErrorCode:401];
+
+                                                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+
+                                                if (pluginResult != nil) {
+                                                    NSLog(@"- PaystackPlugin sendPluginResult");
+                                                    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                                                }
+                                            }
+                         didRequestValidation: ^(NSString *reference){
+                                                // an OTP was requested, transaction has not yet succeeded
+                                                NSLog(@"- PaystackPlugin: an OTP was requested, transaction has not yet succeeded");
+                                            }
+                        didTransactionSuccess: ^(NSString *reference){
+                                                // transaction may have succeeded, please verify on server
+                                                NSLog(@"- PaystackPlugin: transaction may have succeeded, please verify on server");
+                                                NSMutableDictionary *returnInfo = [self setReferenceMsg:reference];
+
+                                                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
+
+                                                if (pluginResult != nil) {
+                                                    NSLog(@"- PaystackPlugin sendPluginResult");
+                                                    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                                                }
+                }];
+            } else {
+                NSMutableDictionary *returnInfo = [self setErrorMsg:@"Invalid Card." withErrorCode:404];
+
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+            }
+
+        
+        }
+        // The sendPluginResult method is thread-safe.
+        if (pluginResult != nil) {
+            NSLog(@"- PaystackPlugin sendPluginResult");
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }
+       
+    }];
+}
+
+- (void)chargeCardWithAccessCode:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"- PaystackPlugin chargeCardWithAccessCode");
+    
+    // Check command.arguments here.
+    NSDictionary* params = [command.arguments objectAtIndex:0];
+
+    [self.commandDelegate runInBackground:^{
+        // Build a resultset for javascript callback.
+        __block CDVPluginResult* pluginResult = nil;
+
+        if (! [self cardParamsAreValid:params[@"cardNumber"] withMonth:params[@"expiryMonth"] withYear:params[@"expiryYear"] andWithCvc:params[@"cvc"]]) {
+
+            NSMutableDictionary *returnInfo = [self setErrorMsg:self.errorMsg withErrorCode:self.errorCode];
+
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
+
+        } else {
+            UIViewController *rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController]; 
+
+            PSTCKCardParams *cardParams = [[PSTCKCardParams alloc] init];
+            cardParams.number = params[@"cardNumber"];
+            cardParams.expMonth = [params[@"expiryMonth"] integerValue];
+            cardParams.expYear = [params[@"expiryYear"] integerValue];
+            cardParams.cvc = params[@"cvc"];
+
+            PSTCKTransactionParams *transactionParams = [[PSTCKTransactionParams alloc] init];
+            transactionParams.access_code = params[@"accessCode"];
+
+            if ([self isCardValid:cardParams]) {
+
+                [[PSTCKAPIClient sharedClient] chargeCard:cardParams
+                               forTransaction:transactionParams
+                            onViewController:rootViewController
+                              didEndWithError:^(NSError *error, NSString *reference){
                                                 NSLog(@"- PaystackPlugin ChargeError is set");
                                                 NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error charging card." withErrorCode:401];
 
