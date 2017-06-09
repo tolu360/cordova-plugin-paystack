@@ -17,13 +17,13 @@ function PaystackPlugin() {}
  * A single object argument will be passed which has a single key: "error" is a string containing a description of the error.
  * @param {Array} The card details in the order - cardNumber, expiryMonth, expiryYear, cvc.
  */
-PaystackPlugin.prototype.getToken = function(successCallback, errorCallback, cardParams) {
+PaystackPlugin.prototype.chargeCardWithAccessCode = function(successCallback, errorCallback, chargeParams) {
 	return cordova.exec(
 		successCallback,
 		errorCallback,
 		'PaystackPlugin',
-		'getToken',
-		[cardParams]
+		'chargeCardWithAccessCode',
+		[chargeParams]
 	);
 };
 
