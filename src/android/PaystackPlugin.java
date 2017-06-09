@@ -22,7 +22,6 @@ import co.paystack.android.Transaction;
 
 public class PaystackPlugin extends CordovaPlugin {
 
-	protected Token token;
 	protected Card card;
 	private Charge charge;
     private Transaction transaction;

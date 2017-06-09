@@ -205,7 +205,7 @@ An object of the form is returned from a successful token request
 
 ```javascript
 {
-  reference: "trx_1k2o600w"
+  reference: "12kkvn2no5"
 }
 ```
 
