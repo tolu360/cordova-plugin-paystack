@@ -20,5 +20,5 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:27.1.0'
-    compile 'co.paystack.android:paystack:3.0.10
+    compile 'co.paystack.android:paystack:3.0.10'
 }
