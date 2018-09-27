@@ -112,6 +112,7 @@
     
     // Check command.arguments here.
     NSDictionary* params = [command.arguments objectAtIndex:0];
+    UIViewController *rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController]; 
 
     [self.commandDelegate runInBackground:^{
         // Build a resultset for javascript callback.
@@ -124,7 +125,6 @@
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
 
         } else {
-            UIViewController *rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController]; 
 
             PSTCKCardParams *cardParams = [[PSTCKCardParams alloc] init];
             cardParams.number = params[@"cardNumber"];
@@ -167,6 +167,7 @@
                             onViewController:rootViewController
                               didEndWithError:^(NSError *error, NSString *reference){
                                                 NSLog(@"- PaystackPlugin ChargeError is set");
+                                                NSLog(@"%@", [error localizedDescription]);
                                                 NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error charging card." withErrorCode:401];
 
                                                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
@@ -215,6 +216,7 @@
     
     // Check command.arguments here.
     NSDictionary* params = [command.arguments objectAtIndex:0];
+    UIViewController *rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController]; 
 
     [self.commandDelegate runInBackground:^{
         // Build a resultset for javascript callback.
@@ -227,7 +229,6 @@
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
 
         } else {
-            UIViewController *rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController]; 
 
             PSTCKCardParams *cardParams = [[PSTCKCardParams alloc] init];
             cardParams.number = params[@"cardNumber"];
@@ -245,6 +246,7 @@
                             onViewController:rootViewController
                               didEndWithError:^(NSError *error, NSString *reference){
                                                 NSLog(@"- PaystackPlugin ChargeError is set");
+                                                NSLog(@"%@", [error localizedDescription]);
                                                 NSMutableDictionary *returnInfo = [self setErrorMsg:@"Error charging card." withErrorCode:401];
 
                                                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:returnInfo];
