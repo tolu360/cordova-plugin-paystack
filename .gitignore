@@ -11,3 +11,4 @@ lib-cov
 *.pid
 *.gz
 *.tmp
+src/android/.gradle
