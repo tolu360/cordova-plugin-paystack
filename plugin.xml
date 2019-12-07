@@ -52,6 +52,6 @@
     </platform>
 
     <!-- dependency to set publishable key -->
-    <dependency id="cordova-custom-config" version="5.0.2" />
+    <dependency id="cordova-custom-config" version="5.1.0" />
 
 </plugin>
