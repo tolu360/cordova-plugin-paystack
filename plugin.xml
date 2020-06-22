@@ -51,7 +51,7 @@
 
     </platform>
 
-    <!-- dependency to set publishable key -->
+    <!-- dependency to set publishable key updated to 5.1.0 to fix cordova build errors in version >=8-->
     <dependency id="cordova-custom-config" version="5.1.0" />
 
 </plugin>

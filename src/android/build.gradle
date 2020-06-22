@@ -2,7 +2,7 @@ android {
     compileSdkVersion 27
     buildToolsVersion "27.0.1"
 
-    defaultConfig {
+    defaultConfig { // removed versionCode and versionName so android can use versions assigned in config.xml
         minSdkVersion 19
         targetSdkVersion 27
     }
